@@ -1,7 +1,7 @@
 
 //
 //  mSDIFMatrix.cpp
-//  
+//
 //
 //  Created by Alex on 28/01/2018.
 //  Copyright © 2018 Alex Nadzharov. All rights reserved.
@@ -93,10 +93,15 @@ mFileError MSDIFMatrix::fromFile(std::ifstream& file)
     //        if (byteSize == 0)
     //            return meBadMatrixDataSize;
 
-    size_t matrix_data_size = header.rows * header.columns * header.byteSize();
+    //size_t matrix_data_size = header.rows * header.columns * header.byteSize();
 
-    data = new char[matrix_data_size];
-    file.read((char*)data, matrix_data_size);
+    data = new char[matrixDataSize()];
+    file.read((char*)data, matrixDataSize());
+
+    if (header.dataType == mTFloat4)
+        for (int i = 0; i < header.rows * header.columns; i++) {
+            swapEndianness(values<float>()[i]);
+        }
 
     int padding_size = (matrixDataSize() % 8) ? (8 - (matrixDataSize() % 8)) : 0;
     if ((matrixDataSize() % 8) && (header.byteSize() == 4))
@@ -157,5 +162,3 @@ std::string MSDIFMatrix::info()
 
     return ret;
 }
-
-
