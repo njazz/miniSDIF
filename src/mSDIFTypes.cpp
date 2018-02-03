@@ -1,3 +1,4 @@
+
 //
 //  mSDIFTypes.cpp
 //  miniSDIF
@@ -12,13 +13,13 @@
 using json = nlohmann::json;
 
 const json MTypes = {
-    // supporting
+    // supporting types
     "1NVT", { "description", "NameValueTable",
                 "columns", { "NVTText" },
-                "type", "Char" },
+                "type", mTChar },
     "1TYP", { "description", "TypeDefinitions",
                 "columns", { "TYPText" },
-                "type", "Char" },
+                "type", mTChar },
     "1IDS", {},
     //
     "1GAI", {}, "1WIN", {}, "IWIN", {}, "1CHA", {},
@@ -27,7 +28,7 @@ const json MTypes = {
     // Sinusoidal Modelling
     "1PIC", {}, "1TRC", { "description", "SinusoidalTracks",
                             "columns", { "Index", "Frequency", "Amplitude", "Phase" },
-                            "type", "Float4"
+                            "type", mTFloat4
 
                         },
     "1HRM", {}, "1HRE", {},
@@ -48,3 +49,30 @@ const json MTypes = {
     //
     "EMPM", {}, "EMJR", {}, "EFPM", {},
 };
+
+MSDIFType::MSDIFType(){};
+
+MSDIFType* MSDIFType::fromSignature(std::string signature)
+{
+    json t1 = MTypes[signature];
+    if (t1.is_null())
+        return 0;
+
+    json t2 = t1["description"];
+    if (t2.is_null())
+        return 0;
+
+    MSDIFType* ret = new MSDIFType();
+
+    ret->_description = t1["description"];
+    auto n = t1["columns"].array();
+    for (auto s : n) {
+        ret->_columnNames.push_back(s);
+    }
+    ret->_dataType = t1["type"];
+    
+    ret->_signature = signature;
+
+    return ret;
+}
+
