@@ -49,18 +49,19 @@ class MSDIFMatrix {
     mFileError toFile(std::ofstream& file);
 
     MSDIFMatrixHeader header;
+
+    MSDIFMatrix();
 public:
 
     //
-    MSDIFMatrix();
     MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns, uint32_t type);
     ~MSDIFMatrix();
 
     int rows(){return header.rows;}
     int columns(){return header.columns;}
 
-    void newSize(size_t rows, size_t columns);
-    void resize(size_t rows, size_t columns);
+    void newSize(uint32_t rows, uint32_t columns);
+    void resize(uint32_t rows, uint32_t columns);
 
     void addRow();
     void addColumn();
@@ -142,6 +143,8 @@ public:
         if (!data)
             return 0;
 
+        if (header.byteSize() != sizeof(T)) return 0;
+
         return static_cast<T*>(data);
     }
 
@@ -151,11 +154,15 @@ public:
         if (!data)
             return;
 
+        if (header.byteSize() != sizeof(T)) return;
+
         // int s = matrixDataSize();
 
         for (int i = 0; i < matrixDataSize(); i++)
             ((char*)data)[i] = nv[i];
     }
+
+
 };
 
 #endif /* mSDIFMatrix_hpp */

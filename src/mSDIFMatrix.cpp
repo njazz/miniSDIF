@@ -97,12 +97,29 @@ MSDIFMatrix::MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns,
     header.rows = rows;
     header.dataType = type;
 
+    // TODO: dataType for signatures
+    if (!strncmp(signature.c_str(),"1TYP",4))
+        header.dataType = mTChar;
+    if (!strncmp(signature.c_str(),"1NVT",4))
+        header.dataType = mTChar;
+
+
     data = malloc(matrixDataSize());
 }
 
 MSDIFMatrix::~MSDIFMatrix()
 {
-    // delete data;
+    if (data)
+        free(data);
+}
+
+void MSDIFMatrix::newSize(uint32_t rows, uint32_t columns)
+{
+    if (data)
+        free(data);
+    header.rows = rows;
+    header.columns = columns;
+    data = malloc(matrixDataSize());
 }
 
 mFileError MSDIFMatrix::fromFile(std::ifstream& file)
@@ -195,4 +212,15 @@ std::string MSDIFMatrix::info()
     ret += "\n";
 
     return ret;
+}
+
+template<>
+void MSDIFMatrix::setValues<std::string>(std::string nv)
+{
+    if (data)
+        free(data);
+
+    data = malloc(nv.length());
+
+    setValues<char*>(const_cast<char*>(nv.c_str()));
 }

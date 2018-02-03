@@ -35,6 +35,7 @@
     XCTAssertEqual(h2.dataType, h1.dataType);
     XCTAssert(strncmp(h2.signature, "1TRC", 4) == 0);
 
+    XCTAssertEqual(h2.byteSize(), 4);
     // todo file
 }
 

@@ -18,6 +18,8 @@
 		3109E22E2024A259003895DD /* mSDIFMatrix.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 3109E2252024A259003895DD /* mSDIFMatrix.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		3109E22F2024A259003895DD /* mSDIFStructures.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 3109E2262024A259003895DD /* mSDIFStructures.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		3109E2462024A359003895DD /* miniSDIFTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3109E2452024A359003895DD /* miniSDIFTests.mm */; };
+		31371AAA202601EA00348CC3 /* mSDIFTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31371AA8202601EA00348CC3 /* mSDIFTypes.cpp */; };
+		31371AAB202601EA00348CC3 /* mSDIFTypes.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 31371AA9202601EA00348CC3 /* mSDIFTypes.hpp */; };
 		31B6327E2024A3930071F4D9 /* mSDIF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3109E21E2024A259003895DD /* mSDIF.cpp */; };
 		31B6327F2024A3930071F4D9 /* mSDIFFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3109E2202024A259003895DD /* mSDIFFile.cpp */; };
 		31B632802024A3930071F4D9 /* mSDIFFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3109E2222024A259003895DD /* mSDIFFrame.cpp */; };
@@ -40,6 +42,9 @@
 		3109E23D2024A318003895DD /* miniSDIFTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = miniSDIFTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3109E2412024A318003895DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3109E2452024A359003895DD /* miniSDIFTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = miniSDIFTests.mm; sourceTree = "<group>"; };
+		31371AA6202601CF00348CC3 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
+		31371AA8202601EA00348CC3 /* mSDIFTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mSDIFTypes.cpp; sourceTree = "<group>"; };
+		31371AA9202601EA00348CC3 /* mSDIFTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = mSDIFTypes.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +96,7 @@
 		3109E21D2024A259003895DD /* src */ = {
 			isa = PBXGroup;
 			children = (
+				31371AA6202601CF00348CC3 /* json.hpp */,
 				3109E21E2024A259003895DD /* mSDIF.cpp */,
 				3109E21F2024A259003895DD /* mSDIF.hpp */,
 				3109E2202024A259003895DD /* mSDIFFile.cpp */,
@@ -99,6 +105,8 @@
 				3109E2232024A259003895DD /* mSDIFFrame.hpp */,
 				3109E2242024A259003895DD /* mSDIFMatrix.cpp */,
 				3109E2252024A259003895DD /* mSDIFMatrix.hpp */,
+				31371AA8202601EA00348CC3 /* mSDIFTypes.cpp */,
+				31371AA9202601EA00348CC3 /* mSDIFTypes.hpp */,
 				3109E2262024A259003895DD /* mSDIFStructures.hpp */,
 			);
 			path = src;
@@ -124,6 +132,7 @@
 				3109E22A2024A259003895DD /* mSDIFFile.hpp in Headers */,
 				3109E22F2024A259003895DD /* mSDIFStructures.hpp in Headers */,
 				3109E22E2024A259003895DD /* mSDIFMatrix.hpp in Headers */,
+				31371AAB202601EA00348CC3 /* mSDIFTypes.hpp in Headers */,
 				3109E22C2024A259003895DD /* mSDIFFrame.hpp in Headers */,
 				3109E2172024A1D7003895DD /* miniSDIF.h in Headers */,
 			);
@@ -226,6 +235,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				31371AAA202601EA00348CC3 /* mSDIFTypes.cpp in Sources */,
 				3109E22D2024A259003895DD /* mSDIFMatrix.cpp in Sources */,
 				3109E2272024A259003895DD /* mSDIF.cpp in Sources */,
 				3109E22B2024A259003895DD /* mSDIFFrame.cpp in Sources */,
