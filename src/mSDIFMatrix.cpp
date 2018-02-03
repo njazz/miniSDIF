@@ -132,7 +132,7 @@ mFileError MSDIFMatrix::fromFile(std::ifstream& file)
     return meOK;
 }
 
-inline uint32_t MSDIFMatrix::matrixDataSize()
+uint32_t MSDIFMatrix::matrixDataSize()
 {
     return header.rows * header.columns * header.byteSize();
 }
@@ -149,7 +149,6 @@ inline int MSDIFMatrix::paddingSize()
 mFileError MSDIFMatrix::toFile(std::ofstream& file)
 {
     printf("write matrix\n");
-
     printf("write: %s", info().c_str());
 
     header.toFile(file);
@@ -159,12 +158,23 @@ mFileError MSDIFMatrix::toFile(std::ofstream& file)
 
     printf("write: %s", info().c_str());
 
-    file.write((char*)data, matrixDataSize());
+    char* b_data = new char[matrixDataSize()];
+
+    if (header.dataType == mTFloat4)
+        for (int i = 0; i < header.rows * header.columns; i++) {
+            ((float*)b_data)[i] = values<float>()[i];
+            swapEndianness(((float*)b_data)[i]);
+        }
+
+    file.write((char*)b_data, matrixDataSize());
 
     printf("write matrix size %i\n", matrixDataSize());
 
     char* padding = new char[paddingSize()];
     file.write((char*)padding, paddingSize());
+
+    delete[] b_data;
+    delete[] padding;
 
     return meOK;
 }

@@ -40,12 +40,7 @@
 
 - (void)testMatrix
 {
-    MSDIFMatrix m1;
-
-    m1.header.setSignature("1TRC");
-    m1.header.columns = 3;
-    m1.header.rows = 7;
-    m1.header.dataType = mTFloat4;
+    MSDIFMatrix m1("1TRC",3,7,mTFloat4);
 
     XCTAssertEqual(m1.matrixDataSize(), 4 * 3 * 7);
     XCTAssertEqual(m1.paddingSize(), 4);

@@ -41,16 +41,16 @@ typedef std::vector<MSDIFFrame*> MSDIFFrameVector;
 class MSDIFFile {
     MSDIFFileHeader header;
 
-public:
-    MSDIFFile();
-
-    MSDIFFrameVector frames;
-
     mFileError fromFile(std::ifstream& file);
     mFileError toFile(std::ofstream& file);
 
+public:
+    MSDIFFile();
+
     mFileError readFile(std::string fileName);
     mFileError writeFile(std::string fileName);
+
+    MSDIFFrameVector frames;
 
     MSDIFFrameVector framesWithSignature(std::string signature);
     MSDIFFrameVector framesWithTimeRange(double start, double end);

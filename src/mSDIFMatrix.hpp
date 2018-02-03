@@ -16,8 +16,8 @@
 
 #include <string>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 struct MSDIFMatrixHeaderStruct {
     char signature[4]; // matrix type
@@ -40,19 +40,24 @@ struct MSDIFMatrixHeader : public MSDIFMatrixHeaderStruct {
 
 //
 class MSDIFMatrix {
+    friend class MSDIFFrame;
+
     void* data = 0;
 
-public:
+    //
+    mFileError fromFile(std::ifstream& file);
+    mFileError toFile(std::ofstream& file);
+
     MSDIFMatrixHeader header;
+public:
 
     //
     MSDIFMatrix();
     MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns, uint32_t type);
     ~MSDIFMatrix();
 
-    //
-    mFileError fromFile(std::ifstream& file);
-    mFileError toFile(std::ofstream& file);
+    int rows(){return header.rows;}
+    int columns(){return header.columns;}
 
     void newSize(size_t rows, size_t columns);
     void resize(size_t rows, size_t columns);
@@ -65,6 +70,8 @@ public:
 
     uint32_t matrixDataSize();
     int paddingSize();
+
+    char* signature() { return header.signature; }
 
     std::string info();
 

@@ -38,11 +38,18 @@ struct MSDIFFrameHeader : public MSDIFFrameHeaderStruct {
 typedef std::vector<MSDIFMatrix*> MSDIFMatrixVector;
 
 class MSDIFFrame {
+    friend class MSDIFFile;
+
     MSDIFFrameHeader header;
     MSDIFMatrixVector _matrices;
 
-public:
     MSDIFFrame();
+
+    //
+    mFileError fromFile(std::ifstream& file);
+    mFileError toFile(std::ofstream& file);
+public:
+
     MSDIFFrame(std::string signature, int32_t streamID);
 
     //
@@ -58,9 +65,6 @@ public:
     uint32_t matrixCount() { return header.matrixCount; }
 
     //
-
-    mFileError fromFile(std::ifstream& file);
-    mFileError toFile(std::ofstream& file);
 
     MSDIFMatrixVector& matrices() { return _matrices; }; // todo
     MSDIFMatrixVector matricesWithSignature(std::string signature);

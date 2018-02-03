@@ -82,6 +82,7 @@ MSDIFFile::MSDIFFile()
     header.padding = 0;
 };
 
+
 mFileError MSDIFFile::fromFile(std::ifstream& file)
 {
     mFileError err = header.fromFile(file);
@@ -178,7 +179,7 @@ mFileError MSDIFFile::writeFile(std::string fileName)
 
 std::string MSDIFFile::info()
 {
-    std::string ret = "[SDIF File] \n";
+    std::string ret = "[SDIF File] ";
     ret += " Version: " + std::to_string(header.specificationVersion) + " Frame count: " + std::to_string(frames.size()) + "\n";
 
     for (MSDIFFrameVector::iterator it = frames.begin(); it != frames.end(); ++it) {
@@ -251,4 +252,4 @@ void MSDIFFile::removeAllFrames()
 {
     frames.clear();
 }
-}
+
