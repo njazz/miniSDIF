@@ -1,6 +1,6 @@
 //
 //  mSDIFMatrix.hpp
-//  
+//
 //
 //  Created by Alex on 28/01/2018.
 //  Copyright © 2018 Alex Nadzharov. All rights reserved.
@@ -46,29 +46,29 @@ public:
     MSDIFMatrixHeader header;
 
     //
+    MSDIFMatrix();
+    MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns, uint32_t type);
+    ~MSDIFMatrix();
 
-    MSDIFMatrix()
-    {
-    }
-
-    MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns, uint32_t type)
-    {
-        header.setSignature(signature);
-        header.columns = columns;
-        header.rows = rows;
-        header.dataType = type;
-
-        data = malloc(matrixDataSize());
-    }
-
-    ~MSDIFMatrix()
-    {
-        // delete data;
-    }
     //
-
     mFileError fromFile(std::ifstream& file);
     mFileError toFile(std::ofstream& file);
+
+    void newSize(size_t rows, size_t columns);
+    void resize(size_t rows, size_t columns);
+
+    void addRow();
+    void addColumn();
+
+    void deleteRow(size_t idx);
+    void deleteColumn(size_t idx);
+
+    uint32_t matrixDataSize();
+    int paddingSize();
+
+    std::string info();
+
+    // ======= templates =======
 
     template <typename T>
     T* rowAt(size_t idx)
@@ -141,16 +141,14 @@ public:
     template <typename T>
     void setValues(T nv)
     {
+        if (!data)
+            return;
+
         // int s = matrixDataSize();
 
         for (int i = 0; i < matrixDataSize(); i++)
             ((char*)data)[i] = nv[i];
     }
-
-    inline uint32_t matrixDataSize() { return header.rows * header.columns * header.byteSize(); }
-    int paddingSize();
-
-    std::string info();
 };
 
 #endif /* mSDIFMatrix_hpp */

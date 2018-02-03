@@ -86,6 +86,25 @@ void MSDIFMatrixHeader::setSignature(std::string s)
 
 //
 
+MSDIFMatrix::MSDIFMatrix()
+{
+}
+
+MSDIFMatrix::MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns, uint32_t type)
+{
+    header.setSignature(signature);
+    header.columns = columns;
+    header.rows = rows;
+    header.dataType = type;
+
+    data = malloc(matrixDataSize());
+}
+
+MSDIFMatrix::~MSDIFMatrix()
+{
+    // delete data;
+}
+
 mFileError MSDIFMatrix::fromFile(std::ifstream& file)
 {
     header.fromFile(file);
@@ -111,6 +130,11 @@ mFileError MSDIFMatrix::fromFile(std::ifstream& file)
     file.read((char*)padding, padding_size);
 
     return meOK;
+}
+
+inline uint32_t MSDIFMatrix::matrixDataSize()
+{
+    return header.rows * header.columns * header.byteSize();
 }
 
 inline int MSDIFMatrix::paddingSize()
@@ -154,8 +178,8 @@ std::string MSDIFMatrix::info()
         s[i] = header.signature[i];
     s[4] = '\0';
 
-    ret += "* Matrix type: " + std::string(s);
-    ret += "*** Matrix Byte size: " + std::to_string(header.byteSize());
+    ret += "--[Matrix] type: " + std::string(s);
+    ret += " Cell size: " + std::to_string(header.byteSize());
     ret += " Rows: " + std::to_string(header.rows);
     ret += " Columns: " + std::to_string(header.columns);
     ret += "\n";

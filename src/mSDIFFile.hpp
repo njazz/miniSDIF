@@ -1,7 +1,6 @@
 //
 //  mSDIFFile.h
 //  
-//
 //  Created by Alex on 28/01/2018.
 //  Copyright © 2018 Alex Nadzharov. All rights reserved.
 //
@@ -21,7 +20,7 @@
 //
 
 struct MSDIFFileHeaderStruct {
-    char signature[4]; // SDIF
+    char signature[4]; // SDIFÏ
     uint32_t headerFrameSize;
     uint32_t specificationVersion;
     uint32_t padding;
@@ -43,13 +42,7 @@ class MSDIFFile {
     MSDIFFileHeader header;
 
 public:
-    MSDIFFile()
-    {
-        header.setSignature("SDIF");
-        header.headerFrameSize = 8;
-        header.specificationVersion = 3;
-        header.padding = 0;
-    };
+    MSDIFFile();
 
     MSDIFFrameVector frames;
 
@@ -63,10 +56,10 @@ public:
     MSDIFFrameVector framesWithTimeRange(double start, double end);
     MSDIFFrameVector framesWithStreamID(uint32_t streamID);
 
-    void addFrame(MSDIFFrame* fr)
-    {
-        frames.push_back(fr);
-    }
+    void addFrame(MSDIFFrame* fr);
+    void removeFrameAt(size_t idx);
+    void insertFrame(size_t idx,MSDIFFrame* fr);
+    void removeAllFrames();
 
     std::string info();
 };

@@ -70,6 +70,14 @@ void MSDIFFrameHeader::setSignature(std::string s)
 }
 //
 
+MSDIFFrame::MSDIFFrame(){};
+
+MSDIFFrame::MSDIFFrame(std::string signature, int32_t streamID)
+{
+    header.setSignature(signature);
+    header.streamID = streamID;
+}
+
 mFileError MSDIFFrame::fromFile(std::ifstream& file)
 {
     mFileError err = header.fromFile(file);
@@ -134,9 +142,9 @@ std::string MSDIFFrame::info()
         s[i] = header.signature[i];
     s[4] = '\0';
 
-    ret += "* Frame type: " + std::string(s);
+    ret += "-[Frame] Type: " + std::string(s);
     ret += " Stream ID: " + std::to_string(header.streamID);
-    ret += " Matrix count: " + std::to_string(header.matrixCount);
+    ret += " Matrices: " + std::to_string(header.matrixCount);
     ret += " Time: " + std::to_string(header.time);
     ret += "\n";
 
@@ -157,6 +165,37 @@ MSDIFMatrixVector MSDIFFrame::matricesWithSignature(std::string signature)
     }
 
     return ret;
+}
+
+//
+
+void MSDIFFrame::addMatrix(MSDIFMatrix* m)
+{
+    _matrices.push_back(m);
+    header.matrixCount++;
+    header.frameSize = 16 + m->matrixDataSize();
+}
+
+void MSDIFFrame::removeMatrixAt(size_t idx)
+{
+    if (idx>=_matrices.size())
+        return;
+    
+    _matrices.erase(_matrices.begin()+idx);
+}
+void MSDIFFrame::insertMatrix(size_t idx, MSDIFMatrix* fr)
+{
+    if (idx>=_matrices.size())
+        return;
+    
+    _matrices.insert(_matrices.begin()+idx, fr);
+}
+
+void MSDIFFrame::removeAllMatrices()
+{
+    _matrices.clear();
+    header.matrixCount = 0;
+    header.frameSize = 16;
 }
 
 

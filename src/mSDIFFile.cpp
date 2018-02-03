@@ -1,7 +1,11 @@
 
+
+
+
+
 //
 //  mSDIFFile.cpp
-//  
+//
 //
 //  Created by Alex on 28/01/2018.
 //  Copyright © 2018 Alex Nadzharov. All rights reserved.
@@ -62,12 +66,21 @@ mFileError MSDIFFileHeader::toFile(std::ofstream& file)
 
 void MSDIFFileHeader::setSignature(std::string s)
 {
-    if (s.length()<4) return;
-    for (int i=0;i<4;i++)
+    if (s.length() < 4)
+        return;
+    for (int i = 0; i < 4; i++)
         signature[i] = s[i];
 }
 
 //
+
+MSDIFFile::MSDIFFile()
+{
+    header.setSignature("SDIF");
+    header.headerFrameSize = 8;
+    header.specificationVersion = 3;
+    header.padding = 0;
+};
 
 mFileError MSDIFFile::fromFile(std::ifstream& file)
 {
@@ -90,14 +103,13 @@ mFileError MSDIFFile::fromFile(std::ifstream& file)
 
         if (newFrame->frameSize() >= 12)
             frames.push_back(newFrame);
-        else
-        {
+        else {
             delete newFrame;
             return meOK;
         }
 
         //fuse
-        if (c>1024)
+        if (c > 1024)
             return meOK;
 
         //delete newFrame;
@@ -166,12 +178,12 @@ mFileError MSDIFFile::writeFile(std::string fileName)
 
 std::string MSDIFFile::info()
 {
-    std::string ret = "SDIF File \n";
-    ret += "File version: " + std::to_string(header.specificationVersion) + "Frame count: " + std::to_string(frames.size()) + "\n";
+    std::string ret = "[SDIF File] \n";
+    ret += " Version: " + std::to_string(header.specificationVersion) + " Frame count: " + std::to_string(frames.size()) + "\n";
 
     for (MSDIFFrameVector::iterator it = frames.begin(); it != frames.end(); ++it) {
         if (*it)
-        ret += (*it)->info();
+            ret += (*it)->info();
     }
 
     return ret;
@@ -194,13 +206,13 @@ MSDIFFrameVector MSDIFFile::framesWithStreamID(uint32_t streamID)
     MSDIFFrameVector ret;
 
     for (MSDIFFrameVector::iterator it = frames.begin(); it != frames.end(); ++it) {
-        if ((*it)->streamID()== streamID)
+        if ((*it)->streamID() == streamID)
             ret.push_back(*it);
     }
 
     return ret;
 }
-            
+
 MSDIFFrameVector MSDIFFile::framesWithSignature(std::string signature)
 {
     MSDIFFrameVector ret;
@@ -211,4 +223,32 @@ MSDIFFrameVector MSDIFFile::framesWithSignature(std::string signature)
     }
 
     return ret;
+}
+
+//
+
+void MSDIFFile::addFrame(MSDIFFrame* fr)
+{
+    frames.push_back(fr);
+}
+
+void MSDIFFile::removeFrameAt(size_t idx)
+{
+    if (idx >= frames.size())
+        return;
+
+    frames.erase(frames.begin() + idx);
+}
+void MSDIFFile::insertFrame(size_t idx, MSDIFFrame* fr)
+{
+    if (idx >= frames.size())
+        return;
+
+    frames.insert(frames.begin() + idx, fr);
+}
+
+void MSDIFFile::removeAllFrames()
+{
+    frames.clear();
+}
 }
