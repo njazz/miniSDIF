@@ -253,5 +253,5 @@ void MSDIFFile::removeAllFrames()
     _frames.clear();
 }
 
-}
+
 
