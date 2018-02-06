@@ -51,14 +51,14 @@ class MSDIFMatrix {
     MSDIFMatrixHeader header;
 
     MSDIFMatrix();
-public:
 
-    //
-    MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns, uint32_t type);
+public:
+    ///> @brief if the matrix type is not found, creates with supplied parameters
+    MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns = 1, uint32_t type = mTChar);
     ~MSDIFMatrix();
 
-    int rows(){return header.rows;}
-    int columns(){return header.columns;}
+    int rows() { return header.rows; }
+    int columns() { return header.columns; }
 
     void newSize(uint32_t rows, uint32_t columns);
     void resize(uint32_t rows, uint32_t columns);
@@ -138,14 +138,16 @@ public:
     }
 
     template <typename T>
-    T* values()
+    T values()
     {
         if (!data)
             return 0;
 
-        if (header.byteSize() != sizeof(T)) return 0;
+        //if (header.byteSize() != sizeof(T)) return 0;
 
-        return static_cast<T*>(data);
+        void* ret = malloc(matrixDataSize());
+        memcpy(ret, data, matrixDataSize());
+        return static_cast<T>(ret);
     }
 
     template <typename T>
@@ -154,15 +156,19 @@ public:
         if (!data)
             return;
 
-        if (header.byteSize() != sizeof(T)) return;
+        //if (header.byteSize() != sizeof(T)) return;
 
         // int s = matrixDataSize();
 
         for (int i = 0; i < matrixDataSize(); i++)
-            ((char*)data)[i] = nv[i];
+            ((char*)data)[i] = ((char*)nv)[i];
     }
-
-
 };
+
+template <>
+std::string MSDIFMatrix::values<std::string>();
+
+template<>
+void MSDIFMatrix::setValues<std::string>(std::string nv);
 
 #endif /* mSDIFMatrix_hpp */

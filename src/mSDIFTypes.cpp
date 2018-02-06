@@ -13,47 +13,80 @@
 using json = nlohmann::json;
 
 const json MTypes = {
+    //
     // supporting types
-    "1NVT", { "description", "NameValueTable",
-                "columns", { "NVTText" },
-                "type", mTChar },
-    "1TYP", { "description", "TypeDefinitions",
-                "columns", { "TYPText" },
-                "type", mTChar },
-    "1IDS", {},
-    //
-    "1GAI", {}, "1WIN", {}, "IWIN", {}, "1CHA", {},
-    //
-    "1FQ0", {},
-    // Sinusoidal Modelling
-    "1PIC", {}, "1TRC", { "description", "SinusoidalTracks",
-                            "columns", { "Index", "Frequency", "Amplitude", "Phase" },
-                            "type", mTFloat4
+    { "1NVT", { { "description", "NameValueTable" },
+                  { "columns", { "NVTText" } },
+                  { "type", mTChar } } },
 
-                        },
-    "1HRM", {}, "1HRE", {},
+    { "1TYP", { { "description", "TypeDefinitions" },
+                  { "columns", { "TYPText" } },
+                  { "type", mTChar } } },
+
+    { "1IDS", {} },
     //
-    "1ENV", {}, "1TFC", {}, "1CEC", {}, "1ARA", {}, "1ARK", {},
     //
-    "1FOF", {}, "1RES", {}, "1DIS", {}, "1NOI", {}, "1FOB", {}, "1REB", {},
+    { "1GAI", {} },
+    { "1WIN", {} },
+    { "IWIN", {} },
+    { "1CHA", {} },
     //
-    "ISTF", {}, "1STF", {},
+    { "1FQ0", {} },
     //
-    "INRG", {}, "1NRG", {}, "1BND", {},
+    // Sinusoidal Modelling
+    { "1PIC", {} },
+    { "1TRC", { { "description", "SinusoidalTracks" },
+                  { "columns", { "Index", "Frequency", "Amplitude", "Phase" } },
+                  { "type", mTFloat4 }
+
+              } },
+    { "1HRM", {} },
+    { "1HRE", {} },
     //
-    "1TDS", {},
     //
-    "1PEM", {}, "ITMR", {}, "ITMI", {},
+    { "1ENV", {} },
+    { "1TFC", {} },
+    { "1CEC", {} },
+    { "1ARA", {} },
+    { "1ARK", {} },
     //
-    "1VUN", {}, "1VUF", {}, "1MRK", {}, "1VUV", {},
+    { "1FOF", {} },
+    { "1RES", {} },
+    { "1DIS", {} },
+    { "1NOI", {} },
+    { "1FOB", {} },
+    { "1REB", {} },
     //
-    "EMPM", {}, "EMJR", {}, "EFPM", {},
+    { "ISTF", {} },
+    { "1STF", {} },
+    //
+    { "INRG", {} },
+    { "1NRG", {} },
+    { "1BND", {} },
+    //
+    { "1TDS", {} },
+    //
+    { "1PEM", {} },
+    { "ITMR", {} },
+    { "ITMI", {} },
+    //
+    { "1VUN", {} },
+    { "1VUF", {} },
+    { "1MRK", {} },
+    { "1VUV", {} },
+    //
+    { "EMPM", {} },
+    { "EMJR", {} },
+    { "EFPM", {} }
 };
 
 MSDIFType::MSDIFType(){};
 
 MSDIFType* MSDIFType::fromSignature(std::string signature)
 {
+    if (MTypes.find(signature) == MTypes.end())
+        return 0;
+
     json t1 = MTypes[signature];
     if (t1.is_null())
         return 0;
@@ -65,14 +98,16 @@ MSDIFType* MSDIFType::fromSignature(std::string signature)
     MSDIFType* ret = new MSDIFType();
 
     ret->_description = t1["description"];
-    auto n = t1["columns"].array();
+    auto n = t1["columns"];
+    
+    // std::cout << t1 <<"\n";
+    
     for (auto s : n) {
         ret->_columnNames.push_back(s);
     }
     ret->_dataType = t1["type"];
-    
+
     ret->_signature = signature;
 
     return ret;
 }
-

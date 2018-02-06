@@ -9,6 +9,7 @@
 #ifndef mSDIF_h
 #define mSDIF_h
 
+#include "mSDIFTypes.hpp"
 #include "mSDIFFile.hpp"
 
 #endif /* mSDIF_h */

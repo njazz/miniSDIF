@@ -48,6 +48,8 @@ class MSDIFFrame {
     //
     mFileError fromFile(std::ifstream& file);
     mFileError toFile(std::ofstream& file);
+    
+    void calculateFrameSize();
 public:
 
     MSDIFFrame(std::string signature, int32_t streamID);

@@ -3,6 +3,7 @@
 
 
 
+
 //
 //  mSDIFFile.cpp
 //
@@ -82,7 +83,6 @@ MSDIFFile::MSDIFFile()
     header.padding = 0;
 };
 
-
 mFileError MSDIFFile::fromFile(std::ifstream& file)
 {
     mFileError err = header.fromFile(file);
@@ -103,7 +103,7 @@ mFileError MSDIFFile::fromFile(std::ifstream& file)
         }
 
         if (newFrame->frameSize() >= 12)
-            frames.push_back(newFrame);
+            _frames.push_back(newFrame);
         else {
             delete newFrame;
             return meOK;
@@ -128,7 +128,7 @@ mFileError MSDIFFile::toFile(std::ofstream& file)
     if (err != meOK)
         return err;
 
-    for (MSDIFFrameVector::iterator it = frames.begin(); it != frames.end(); ++it) {
+    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
 
         mFileError err = (*it)->toFile(file);
         if (!(err == meOK)) {
@@ -180,9 +180,9 @@ mFileError MSDIFFile::writeFile(std::string fileName)
 std::string MSDIFFile::info()
 {
     std::string ret = "[SDIF File] ";
-    ret += " Version: " + std::to_string(header.specificationVersion) + " Frame count: " + std::to_string(frames.size()) + "\n";
+    ret += " Version: " + std::to_string(header.specificationVersion) + " Frame count: " + std::to_string(_frames.size()) + "\n";
 
-    for (MSDIFFrameVector::iterator it = frames.begin(); it != frames.end(); ++it) {
+    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
         if (*it)
             ret += (*it)->info();
     }
@@ -194,7 +194,7 @@ MSDIFFrameVector MSDIFFile::framesWithTimeRange(double start, double end)
 {
     MSDIFFrameVector ret;
 
-    for (MSDIFFrameVector::iterator it = frames.begin(); it != frames.end(); ++it) {
+    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
         if (((*it)->time() >= start) && ((*it)->time() < end))
             ret.push_back(*it);
     }
@@ -206,7 +206,7 @@ MSDIFFrameVector MSDIFFile::framesWithStreamID(uint32_t streamID)
 {
     MSDIFFrameVector ret;
 
-    for (MSDIFFrameVector::iterator it = frames.begin(); it != frames.end(); ++it) {
+    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
         if ((*it)->streamID() == streamID)
             ret.push_back(*it);
     }
@@ -218,8 +218,8 @@ MSDIFFrameVector MSDIFFile::framesWithSignature(std::string signature)
 {
     MSDIFFrameVector ret;
 
-    for (MSDIFFrameVector::iterator it = frames.begin(); it != frames.end(); ++it) {
-        if (strncmp((*it)->signature(), signature.c_str(), 4))
+    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
+        if (!strncmp((*it)->signature(), signature.c_str(), 4))
             ret.push_back(*it);
     }
 
@@ -230,26 +230,28 @@ MSDIFFrameVector MSDIFFile::framesWithSignature(std::string signature)
 
 void MSDIFFile::addFrame(MSDIFFrame* fr)
 {
-    frames.push_back(fr);
+    _frames.push_back(fr);
 }
 
 void MSDIFFile::removeFrameAt(size_t idx)
 {
-    if (idx >= frames.size())
+    if (idx >= _frames.size())
         return;
 
-    frames.erase(frames.begin() + idx);
+    _frames.erase(_frames.begin() + idx);
 }
 void MSDIFFile::insertFrame(size_t idx, MSDIFFrame* fr)
 {
-    if (idx >= frames.size())
+    if (idx >= _frames.size())
         return;
 
-    frames.insert(frames.begin() + idx, fr);
+    _frames.insert(_frames.begin() + idx, fr);
 }
 
 void MSDIFFile::removeAllFrames()
 {
-    frames.clear();
+    _frames.clear();
+}
+
 }
 

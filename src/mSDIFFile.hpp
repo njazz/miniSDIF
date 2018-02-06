@@ -20,7 +20,7 @@
 //
 
 struct MSDIFFileHeaderStruct {
-    char signature[4]; // SDIFÏ
+    char signature[4];                  // "SDIF"
     uint32_t headerFrameSize;
     uint32_t specificationVersion;
     uint32_t padding;
@@ -44,18 +44,21 @@ class MSDIFFile {
     mFileError fromFile(std::ifstream& file);
     mFileError toFile(std::ofstream& file);
 
+     MSDIFFrameVector _frames;
 public:
     MSDIFFile();
 
     mFileError readFile(std::string fileName);
     mFileError writeFile(std::string fileName);
 
-    MSDIFFrameVector frames;
+    MSDIFFrameVector frames() {return _frames;};
 
     MSDIFFrameVector framesWithSignature(std::string signature);
     MSDIFFrameVector framesWithTimeRange(double start, double end);
     MSDIFFrameVector framesWithStreamID(uint32_t streamID);
 
+    uint32_t frameCount(){return (uint32_t)_frames.size();}
+    
     void addFrame(MSDIFFrame* fr);
     void removeFrameAt(size_t idx);
     void insertFrame(size_t idx,MSDIFFrame* fr);

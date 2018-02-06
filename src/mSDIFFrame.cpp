@@ -160,20 +160,28 @@ MSDIFMatrixVector MSDIFFrame::matricesWithSignature(std::string signature)
     MSDIFMatrixVector ret;
 
     for (MSDIFMatrixVector::iterator it = _matrices.begin(); it != _matrices.end(); ++it) {
-        if (strncmp((*it)->header.signature, signature.c_str(), 4))
+        if (!strncmp((*it)->header.signature, signature.c_str(), 4))
             ret.push_back(*it);
     }
 
     return ret;
 }
 
-//
+void MSDIFFrame::calculateFrameSize()
+{
+    header.frameSize = 16;
+    for (auto m : _matrices)
+    {
+        header.frameSize+= m->matrixDataSize();
+    }
+}
 
+//
 void MSDIFFrame::addMatrix(MSDIFMatrix* m)
 {
     _matrices.push_back(m);
     header.matrixCount++;
-    header.frameSize = 16 + m->matrixDataSize();
+    calculateFrameSize();
 }
 
 void MSDIFFrame::removeMatrixAt(size_t idx)
@@ -182,13 +190,18 @@ void MSDIFFrame::removeMatrixAt(size_t idx)
         return;
     
     _matrices.erase(_matrices.begin()+idx);
+    header.matrixCount--;
+    calculateFrameSize();
 }
+
 void MSDIFFrame::insertMatrix(size_t idx, MSDIFMatrix* fr)
 {
     if (idx>=_matrices.size())
         return;
     
     _matrices.insert(_matrices.begin()+idx, fr);
+    header.matrixCount++;
+    calculateFrameSize();
 }
 
 void MSDIFFrame::removeAllMatrices()

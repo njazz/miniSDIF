@@ -9,6 +9,8 @@
 
 #include "mSDIFMatrix.hpp"
 
+#include "mSDIFTypes.hpp"
+
 void MSDIFMatrixHeader::operator=(const MSDIFMatrixHeader& h)
 {
     for (int i = 0; i < 4; i++)
@@ -97,26 +99,28 @@ MSDIFMatrix::MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns,
     header.rows = rows;
     header.dataType = type;
 
-    // TODO: dataType for signatures
-    if (!strncmp(signature.c_str(),"1TYP",4))
-        header.dataType = mTChar;
-    if (!strncmp(signature.c_str(),"1NVT",4))
-        header.dataType = mTChar;
+    data = 0;
 
+    MSDIFType* t = MSDIFType::fromSignature(signature);
+    if (t) {
+        header.dataType = t->dataType();
+        header.columns = (uint32_t)t->columnNames().size();
+    }
 
-    data = malloc(matrixDataSize());
+    newSize(header.rows, header.columns);
 }
 
 MSDIFMatrix::~MSDIFMatrix()
 {
-    if (data)
-        free(data);
+    //    if (data)
+    //        free(data);
 }
 
 void MSDIFMatrix::newSize(uint32_t rows, uint32_t columns)
 {
     if (data)
         free(data);
+
     header.rows = rows;
     header.columns = columns;
     data = malloc(matrixDataSize());
@@ -136,7 +140,7 @@ mFileError MSDIFMatrix::fromFile(std::ifstream& file)
 
     if (header.dataType == mTFloat4)
         for (int i = 0; i < header.rows * header.columns; i++) {
-            swapEndianness(values<float>()[i]);
+            swapEndianness(values<float*>()[i]);
         }
 
     int padding_size = (matrixDataSize() % 8) ? (8 - (matrixDataSize() % 8)) : 0;
@@ -177,10 +181,14 @@ mFileError MSDIFMatrix::toFile(std::ofstream& file)
 
     char* b_data = new char[matrixDataSize()];
 
-    if (header.dataType == mTFloat4)
+    float* vv = values<float*>();
+
+    if (header.dataType != mTChar)
         for (int i = 0; i < header.rows * header.columns; i++) {
-            ((float*)b_data)[i] = values<float>()[i];
-            swapEndianness(((float*)b_data)[i]);
+            ((float*)b_data)[i] = vv[i];
+
+            //???
+            //swapEndianness(((float*)b_data)[i]);
         }
 
     file.write((char*)b_data, matrixDataSize());
@@ -214,7 +222,7 @@ std::string MSDIFMatrix::info()
     return ret;
 }
 
-template<>
+template <>
 void MSDIFMatrix::setValues<std::string>(std::string nv)
 {
     if (data)
@@ -223,4 +231,18 @@ void MSDIFMatrix::setValues<std::string>(std::string nv)
     data = malloc(nv.length());
 
     setValues<char*>(const_cast<char*>(nv.c_str()));
+}
+
+template <>
+std::string MSDIFMatrix::values<std::string>()
+{
+    if (!data)
+        return "";
+
+    //    if (header.byteSize() != sizeof(T)) return "";
+
+    char ret[matrixDataSize()];
+    for (int i = 0; i < matrixDataSize(); i++)
+        ret[i] = ((char*)data)[i];
+    return std::string((char*)ret);
 }
