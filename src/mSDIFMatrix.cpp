@@ -140,7 +140,7 @@ mFileError MSDIFMatrix::fromFile(std::ifstream& file)
 
     if (header.dataType == mTFloat4)
         for (int i = 0; i < header.rows * header.columns; i++) {
-            swapEndianness(values<float*>()[i]);
+            swapEndianness(((float*)data)[i]);
         }
 
     int padding_size = (matrixDataSize() % 8) ? (8 - (matrixDataSize() % 8)) : 0;
@@ -181,11 +181,18 @@ mFileError MSDIFMatrix::toFile(std::ofstream& file)
 
     char* b_data = new char[matrixDataSize()];
 
-    float* vv = values<float*>();
+    char* vv = values<char*>();
 
     if (header.dataType != mTChar)
         for (int i = 0; i < header.rows * header.columns; i++) {
-            ((float*)b_data)[i] = vv[i];
+            ((float*)b_data)[i] = ((float*)vv)[i];
+
+            //???
+            swapEndianness(((float*)b_data)[i]);
+        }
+        else
+        for (int i = 0; i < header.rows * header.columns; i++) {
+            ((char*)b_data)[i] = ((char*)vv)[i];
 
             //???
             //swapEndianness(((float*)b_data)[i]);

@@ -80,7 +80,7 @@ MSDIFFile::MSDIFFile()
     header.setSignature("SDIF");
     header.headerFrameSize = 8;
     header.specificationVersion = 3;
-    header.padding = 0;
+    header.padding = 1;
 };
 
 mFileError MSDIFFile::fromFile(std::ifstream& file)
