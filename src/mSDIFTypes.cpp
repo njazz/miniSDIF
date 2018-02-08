@@ -111,3 +111,21 @@ MSDIFType* MSDIFType::fromSignature(std::string signature)
 
     return ret;
 }
+
+int MSDIFType::byteSize()
+{
+    // V3
+    int ret = _dataType % 256;
+
+    // V2
+    if (_dataType == mTFloat4a)
+        ret = 4;
+    if (_dataType == mTFloat4b)
+        ret = 4;
+    if (_dataType == mTFloat8a)
+        ret = 8;
+    if (_dataType == mTFloat8b)
+        ret = 8;
+
+    return ret;
+}

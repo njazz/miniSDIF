@@ -31,5 +31,7 @@ public:
     inline uint32_t dataType(){return _dataType;};
     inline std::vector<std::string> columnNames(){return _columnNames;};
     inline std::string description(){return _description;};
+
+    int byteSize();
 };
 #endif /* mSDIFTypes_hpp */

@@ -16,6 +16,7 @@
 #include <fstream>
 
 #include "mSDIFFrame.hpp"
+#include "mSDIFTypes.hpp"
 
 //
 
@@ -65,6 +66,30 @@ public:
     void removeAllFrames();
 
     std::string info();
+
+    // ==========
+    template <typename T>
+    void createFrameWithMatix(std::string signature,int streamID, float time, T data, int rows)
+    {
+        MSDIFMatrix* m = new MSDIFMatrix(signature, rows);
+        m->setValues<T>(data);
+        MSDIFFrame* f = new MSDIFFrame(signature, streamID);
+        f->setTime(time);
+        f->addMatrix(m);
+        addFrame(f);
+    }
+
+    template <typename T>
+    void insertFrameWithMatix(size_t idx, std::string signature,int streamID, float time, T data, int rows)
+    {
+        //int rows =  sizeof(data);
+        MSDIFMatrix* m = new MSDIFMatrix(signature, rows);
+        m->setValues<T>(data);
+        MSDIFFrame* f = new MSDIFFrame(signature, streamID);
+        f->setTime(time);
+        f->addMatrix(m);
+        insertFrame(idx,f);
+    }
 };
 
 //

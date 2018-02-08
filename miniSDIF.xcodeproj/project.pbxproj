@@ -19,7 +19,7 @@
 		3109E22F2024A259003895DD /* mSDIFStructures.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 3109E2262024A259003895DD /* mSDIFStructures.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		3109E2462024A359003895DD /* miniSDIFTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3109E2452024A359003895DD /* miniSDIFTests.mm */; };
 		31371AAA202601EA00348CC3 /* mSDIFTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31371AA8202601EA00348CC3 /* mSDIFTypes.cpp */; };
-		31371AAB202601EA00348CC3 /* mSDIFTypes.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 31371AA9202601EA00348CC3 /* mSDIFTypes.hpp */; };
+		31371AAB202601EA00348CC3 /* mSDIFTypes.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 31371AA9202601EA00348CC3 /* mSDIFTypes.hpp */; settings = {ATTRIBUTES = (Public, ); }; };
 		31371AAC20260DC200348CC3 /* mSDIFTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31371AA8202601EA00348CC3 /* mSDIFTypes.cpp */; };
 		31B6327E2024A3930071F4D9 /* mSDIF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3109E21E2024A259003895DD /* mSDIF.cpp */; };
 		31B6327F2024A3930071F4D9 /* mSDIFFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3109E2202024A259003895DD /* mSDIFFile.cpp */; };
@@ -133,8 +133,8 @@
 				3109E22A2024A259003895DD /* mSDIFFile.hpp in Headers */,
 				3109E22F2024A259003895DD /* mSDIFStructures.hpp in Headers */,
 				3109E22E2024A259003895DD /* mSDIFMatrix.hpp in Headers */,
-				31371AAB202601EA00348CC3 /* mSDIFTypes.hpp in Headers */,
 				3109E22C2024A259003895DD /* mSDIFFrame.hpp in Headers */,
+				31371AAB202601EA00348CC3 /* mSDIFTypes.hpp in Headers */,
 				3109E2172024A1D7003895DD /* miniSDIF.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
