@@ -46,7 +46,9 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "265"
-            endingLineNumber = "265">
+            endingLineNumber = "265"
+            landmarkName = "-testWriteSDIFFile"
+            landmarkType = "7">
             <Locations>
                <Location
                   shouldBeEnabled = "No"
