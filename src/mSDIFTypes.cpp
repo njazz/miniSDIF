@@ -23,7 +23,9 @@ const json MTypes = {
                   { "columns", { "TYPText" } },
                   { "type", mTChar } } },
 
-    { "1IDS", {} },
+    { "1IDS", { { "description", "StreamInfo" },
+                  { "columns", { "IDSText" } },
+                  { "type", mTChar } } },
     //
     //
     { "1GAI", {} },
@@ -99,9 +101,9 @@ MSDIFType* MSDIFType::fromSignature(std::string signature)
 
     ret->_description = t1["description"];
     auto n = t1["columns"];
-    
+
     // std::cout << t1 <<"\n";
-    
+
     for (auto s : n) {
         ret->_columnNames.push_back(s);
     }

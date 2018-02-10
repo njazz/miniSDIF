@@ -1,2 +1,0 @@
-/usr/bin/ar qc miniSDIF.a  CMakeFiles/miniSDIF.dir/src/mSDIFFile.cpp.o CMakeFiles/miniSDIF.dir/src/mSDIFFrame.cpp.o CMakeFiles/miniSDIF.dir/src/mSDIFMatrix.cpp.o
-/usr/bin/ranlib miniSDIF.a
