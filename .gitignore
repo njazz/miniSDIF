@@ -1,2 +1,4 @@
 build/
+spec/
+
 CMakeLists.txt.user
