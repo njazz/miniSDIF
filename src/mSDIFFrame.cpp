@@ -90,18 +90,14 @@ mFileError MSDIFFrame::fromFile(std::ifstream& file)
     if (err != meOK)
         return err;
 
-    //size_t frame_header_size = header.frameSize;
-
     if (header.frameSize < 12)
         return meOK;
 
-    //fuse
+    // todo: replace?
     if (header.matrixCount>1024)
         header.matrixCount = 1024;
 
     for (int i = 0; i < header.matrixCount; i++) {
-
-        //printf("read matrix %i\n", i);
 
         MSDIFMatrix* newMatrix = new MSDIFMatrix;
 
@@ -114,8 +110,6 @@ mFileError MSDIFFrame::fromFile(std::ifstream& file)
         _matrices.push_back(newMatrix);
 
         printf("<%i>: %s", i, newMatrix->info().c_str());
-
-        //delete newMatrix;
     }
 
     return meOK;

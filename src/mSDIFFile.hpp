@@ -27,6 +27,7 @@
 
 //
 
+///> \brief MSDIFFileHeaderStruct : base POD structure for SDIF File i/o
 struct MSDIFFileHeaderStruct {
     char signature[4];                  // "SDIF"
     uint32_t headerFrameSize;
@@ -43,9 +44,11 @@ struct MSDIFFileHeader : public MSDIFFileHeaderStruct {
     void setSignature(std::string s);
 };
 
-//
 typedef std::vector<MSDIFFrame*> MSDIFFrameVector;
 
+//
+
+///> \brief MSDIFFile : class that represents SDIF file
 class MSDIFFile {
     MSDIFFileHeader header;
 

@@ -25,6 +25,7 @@
 #include <iostream>
 #include <fstream>
 
+///> \brief MSDIFFrameHeaderStruct : base POD structure for SDIF Frame i/o
 struct MSDIFFrameHeaderStruct {
     char signature[4]; // frame type
     uint32_t frameSize = 16; //
@@ -44,6 +45,7 @@ struct MSDIFFrameHeader : public MSDIFFrameHeaderStruct {
 
 typedef std::vector<MSDIFMatrix*> MSDIFMatrixVector;
 
+///> \brief MSDIFFrame : class that represents SDIF frame
 class MSDIFFrame {
     friend class MSDIFFile;
 

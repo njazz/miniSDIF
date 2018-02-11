@@ -12,6 +12,10 @@
 
 //  Created on 03/02/2018.
 
+// /////
+// This file is optional. It aims to provide templates when creating new SDIF matrices/frames.
+// /////
+
 #include "mSDIFTypes.hpp"
 
 #include "json.hpp"
@@ -106,8 +110,6 @@ MSDIFType* MSDIFType::fromSignature(std::string signature)
 
     ret->_description = t1["description"];
     auto n = t1["columns"];
-
-    // std::cout << t1 <<"\n";
 
     for (auto s : n) {
         ret->_columnNames.push_back(s);

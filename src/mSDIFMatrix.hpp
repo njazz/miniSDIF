@@ -16,7 +16,6 @@
 #define mSDIFMatrix_hpp
 
 #include "mSDIFUtils.hpp"
-//#include "mMatrixValues.hpp"
 
 #include <stdio.h>
 
@@ -25,6 +24,7 @@
 #include <fstream>
 #include <iostream>
 
+///> \brief MSDIFMatrixHeaderStruct : base POD structure for SDIF Matrix i/o
 struct MSDIFMatrixHeaderStruct {
     char signature[4]; // matrix type
     uint32_t dataType;
@@ -44,7 +44,7 @@ struct MSDIFMatrixHeader : public MSDIFMatrixHeaderStruct {
     void setSignature(std::string s);
 };
 
-//
+///> \brief MSDIFMatrix : class that represents SDIF matrix
 class MSDIFMatrix {
     friend class MSDIFFrame;
 
@@ -114,7 +114,7 @@ public:
 
         T* d = new T[header.rows];
 
-        // todo replace later
+        // todo: replace later
         for (int i = 0; i < header.rows; i++) {
             d[i] = static_cast<T*>(data)[i * header.columns + idx];
         }
@@ -131,7 +131,7 @@ public:
         if (header.rows < 1)
             return;
 
-        // todo replace later
+        // todo: replace later
         for (int i = 0; i < header.rows; i++) {
             ((T*)data)[i * header.columns + idx] = d[i];
         }
@@ -149,8 +149,6 @@ public:
         if (!data)
             return 0;
 
-        //if (header.byteSize() != sizeof(T)) return 0;
-
         void* ret = malloc(matrixDataSize());
         memcpy(ret, data, matrixDataSize());
         return static_cast<T>(ret);
@@ -161,10 +159,6 @@ public:
     {
         if (!data)
             return;
-
-        //if (header.byteSize() != sizeof(T)) return;
-
-        // int s = matrixDataSize();
 
         for (int i = 0; i < matrixDataSize(); i++)
             ((char*)data)[i] = ((char*)nv)[i];

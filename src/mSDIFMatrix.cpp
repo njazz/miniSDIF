@@ -179,9 +179,6 @@ mFileError MSDIFMatrix::toFile(std::ofstream& file)
 
     header.toFile(file);
 
-    //        if (byteSize == 0)
-    //            return meBadMatrixDataSize;
-
     printf("write: %s", info().c_str());
 
     char* b_data = new char[matrixDataSize()];
@@ -192,14 +189,14 @@ mFileError MSDIFMatrix::toFile(std::ofstream& file)
         for (int i = 0; i < header.rows * header.columns; i++) {
             ((float*)b_data)[i] = ((float*)vv)[i];
 
-            //???
+            // todo: ???
             swapEndianness(((float*)b_data)[i]);
         }
         else
         for (int i = 0; i < header.rows * header.columns; i++) {
             ((char*)b_data)[i] = ((char*)vv)[i];
 
-            //???
+            // todo: ???
             //swapEndianness(((float*)b_data)[i]);
         }
 
@@ -250,8 +247,6 @@ std::string MSDIFMatrix::values<std::string>()
 {
     if (!data)
         return "";
-
-    //    if (header.byteSize() != sizeof(T)) return "";
 
     char ret[matrixDataSize()];
     for (int i = 0; i < matrixDataSize(); i++)
