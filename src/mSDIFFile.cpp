@@ -253,5 +253,10 @@ void MSDIFFile::removeAllFrames()
     _frames.clear();
 }
 
-
-
+void MSDIFFile::applyTime()
+{
+    for (auto f : _frames) {
+        if (f->time())
+            f->applyTime();
+    }
+}

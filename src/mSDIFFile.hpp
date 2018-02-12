@@ -19,8 +19,8 @@
 
 #include <string>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 #include "mSDIFFrame.hpp"
 #include "mSDIFTypes.hpp"
@@ -29,7 +29,7 @@
 
 ///> \brief MSDIFFileHeaderStruct : base POD structure for SDIF File i/o
 struct MSDIFFileHeaderStruct {
-    char signature[4];                  // "SDIF"
+    char signature[4]; // "SDIF"
     uint32_t headerFrameSize;
     uint32_t specificationVersion;
     uint32_t padding;
@@ -55,31 +55,60 @@ class MSDIFFile {
     mFileError fromFile(std::ifstream& file);
     mFileError toFile(std::ofstream& file);
 
-     MSDIFFrameVector _frames;
+    MSDIFFrameVector _frames;
+
+    //
+    float _timeOffset = 0;
+    float _timeScale = 1;
+
 public:
     MSDIFFile();
 
     mFileError readFile(std::string fileName);
     mFileError writeFile(std::string fileName);
 
-    MSDIFFrameVector frames() {return _frames;};
+    MSDIFFrameVector frames() { return _frames; };
 
     MSDIFFrameVector framesWithSignature(std::string signature);
     MSDIFFrameVector framesWithTimeRange(double start, double end);
     MSDIFFrameVector framesWithStreamID(uint32_t streamID);
 
-    uint32_t frameCount(){return (uint32_t)_frames.size();}
-    
+    uint32_t frameCount() { return (uint32_t)_frames.size(); }
+
     void addFrame(MSDIFFrame* fr);
     void removeFrameAt(size_t idx);
-    void insertFrame(size_t idx,MSDIFFrame* fr);
+    void insertFrame(size_t idx, MSDIFFrame* fr);
     void removeAllFrames();
+
+    void replaceFrames(MSDIFFrameVector fv){_frames = fv;}
 
     std::string info();
 
+    // non-destructive editing
+    void setTimeOffset(float t_o)
+    {
+        _timeOffset = t_o;
+        for (auto f : _frames) {
+            if (f->time())
+                f->setTimeOffset(t_o);
+        }
+    }
+    void setTimeScale(float t_s)
+    {
+        _timeScale = t_s;
+        for (auto f : _frames) {
+            if (f->time())
+                f->setTimeScale(t_s);
+        }
+    }
+    float timeOffset() { return _timeOffset; }
+    float timeScale() { return _timeScale; }
+    void applyTime();
+
+
     // ==========
     template <typename T>
-    void createFrameWithMatix(std::string signature,int streamID, float time, T data, int rows)
+    void createFrameWithMatix(std::string signature, int streamID, float time, T data, int rows)
     {
         MSDIFMatrix* m = new MSDIFMatrix(signature, rows);
         m->setValues<T>(data);
@@ -90,7 +119,7 @@ public:
     }
 
     template <typename T>
-    void insertFrameWithMatix(size_t idx, std::string signature,int streamID, float time, T data, int rows)
+    void insertFrameWithMatix(size_t idx, std::string signature, int streamID, float time, T data, int rows)
     {
         //int rows =  sizeof(data);
         MSDIFMatrix* m = new MSDIFMatrix(signature, rows);
@@ -98,7 +127,7 @@ public:
         MSDIFFrame* f = new MSDIFFrame(signature, streamID);
         f->setTime(time);
         f->addMatrix(m);
-        insertFrame(idx,f);
+        insertFrame(idx, f);
     }
 };
 

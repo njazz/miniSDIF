@@ -15,15 +15,15 @@
 #ifndef mSDIFFrame_hpp
 #define mSDIFFrame_hpp
 
-#include "mSDIFUtils.hpp"
 #include "mSDIFMatrix.hpp"
+#include "mSDIFUtils.hpp"
 
 #include <stdio.h>
 
 #include <string>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
 ///> \brief MSDIFFrameHeaderStruct : base POD structure for SDIF Frame i/o
 struct MSDIFFrameHeaderStruct {
@@ -57,17 +57,21 @@ class MSDIFFrame {
     //
     mFileError fromFile(std::ifstream& file);
     mFileError toFile(std::ofstream& file);
-    
-    void calculateFrameSize();
-public:
 
+    void calculateFrameSize();
+
+    //
+    float _timeOffset = 0;
+    float _timeScale = 1;
+
+public:
     MSDIFFrame(std::string signature, int32_t streamID);
 
     //
     char* signature() { return header.signature; }
     uint32_t frameSize() { return header.frameSize; }
 
-    double time() { return header.time; }
+    double time() { return header.time * _timeScale + _timeOffset; }
     void setTime(double t) { header.time = t; }
 
     int32_t streamID() { return header.streamID; }
@@ -86,6 +90,18 @@ public:
     void removeAllMatrices();
 
     std::string info();
+
+    // non-destructive editing
+    void setTimeOffset(float t_o) { _timeOffset = t_o; }
+    void setTimeScale(float t_s) { _timeScale = t_s; }
+    float timeOffset() { return _timeOffset; }
+    float timeScale() { return _timeScale; }
+    void applyTime()
+    {
+        setTime(time());
+        _timeOffset = 0;
+        _timeScale = 1;
+    }
 };
 
 #endif /* mSDIFFrame_hpp */
