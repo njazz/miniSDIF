@@ -16,6 +16,8 @@
 
 #include "mSDIFTypes.hpp"
 
+#include <stdio.h>
+
 void MSDIFMatrixHeader::operator=(const MSDIFMatrixHeader& h)
 {
     for (int i = 0; i < 4; i++)
@@ -131,6 +133,58 @@ void MSDIFMatrix::newSize(uint32_t rows, uint32_t columns)
     data = malloc(matrixDataSize());
 }
 
+void MSDIFMatrix::resizeRows(uint32_t rows)
+{
+    float* oldData = (float*)data;
+    size_t oldDataSize = matrixDataSize();
+
+    header.rows = rows;
+    data = malloc(matrixDataSize());
+
+    if (!oldData)
+        return;
+
+    if (matrixDataSize() < oldDataSize)
+        oldDataSize = matrixDataSize();
+    memcpy(data, oldData, oldDataSize);
+
+    delete oldData;
+}
+
+void MSDIFMatrix::_resizeRowsColumns(uint32_t rows, uint32_t columns)
+{
+    float* oldData = (float*)data;
+    int n_rows = header.rows;
+    int n_cols = header.columns;
+
+    int old_cols = header.columns;
+
+    header.rows = rows;
+    header.columns = columns;
+    data = malloc(matrixDataSize());
+
+    if (rows < n_rows)
+        n_rows = rows;
+    if (columns < n_cols)
+        n_cols = columns;
+
+    for (int x = 0; x < n_cols; x++)
+        for (int y = 0; y < n_rows; y++) {
+            int old_idx = x + y * old_cols;
+            int new_idx = x + y * header.columns;
+
+            ((float*)data)[new_idx] = oldData[old_idx];
+        }
+}
+
+void MSDIFMatrix::resize(uint32_t rows, uint32_t columns)
+{
+    if (columns == header.columns)
+        resizeRows(rows);
+    else
+        _resizeRowsColumns(rows, columns);
+}
+
 mFileError MSDIFMatrix::fromFile(std::ifstream& file)
 {
     header.fromFile(file);
@@ -192,7 +246,7 @@ mFileError MSDIFMatrix::toFile(std::ofstream& file)
             // todo: ???
             swapEndianness(((float*)b_data)[i]);
         }
-        else
+    else
         for (int i = 0; i < header.rows * header.columns; i++) {
             ((char*)b_data)[i] = ((char*)vv)[i];
 

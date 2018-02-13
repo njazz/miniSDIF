@@ -58,6 +58,9 @@ class MSDIFMatrix {
 
     MSDIFMatrix();
 
+
+    void _resizeRowsColumns(uint32_t rows,uint32_t columns);
+
 public:
     ///> @brief if the matrix type is not found, creates with supplied parameters
     MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns = 1, uint32_t type = mTChar);
@@ -68,6 +71,7 @@ public:
 
     void newSize(uint32_t rows, uint32_t columns);
     void resize(uint32_t rows, uint32_t columns);
+    void resizeRows(uint32_t rows);
 
     void addRow();
     void addColumn();
