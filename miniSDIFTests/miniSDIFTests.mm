@@ -36,6 +36,11 @@
     t = MSDIFType::fromSignature("1MRK");
 
     XCTAssert(t == 0);
+    
+    //
+    XCTAssert(MSDIFType::hasIndexColumn("1TRC"));
+    XCTAssert(!MSDIFType::hasIndexColumn("1NVT"));
+    
 }
 
 - (void)testMatrixHeader
@@ -209,12 +214,12 @@
     ff.addFrame(f2);
     
     auto arr = ff.framesWithSignature("1TRC");
-    XCTAssertEqual(arr.size(), 1);
-    XCTAssertEqual(arr[0], f1);
+    XCTAssertEqual(arr->size(), 1);
+    XCTAssertEqual(arr->at(0), f1);
     
     arr = ff.framesWithStreamID(-1);
-    XCTAssertEqual(arr.size(), 1);
-    XCTAssertEqual(arr[0], f2);
+    XCTAssertEqual(arr->size(), 1);
+    XCTAssertEqual(arr->at(0), f2);
     
     //
     

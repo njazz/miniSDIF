@@ -63,7 +63,7 @@ class MSDIFMatrix {
 
 public:
     ///> @brief if the matrix type is not found, creates with supplied parameters
-    MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns = 1, uint32_t type = mTChar);
+    MSDIFMatrix(std::string signature, uint32_t rows = 1, uint32_t columns = 1, uint32_t type = mTChar);
     ~MSDIFMatrix();
 
     int rows() { return header.rows; }

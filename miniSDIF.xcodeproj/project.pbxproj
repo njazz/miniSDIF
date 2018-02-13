@@ -44,6 +44,7 @@
 		31371AA6202601CF00348CC3 /* json.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
 		31371AA8202601EA00348CC3 /* mSDIFTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = mSDIFTypes.cpp; sourceTree = "<group>"; };
 		31371AA9202601EA00348CC3 /* mSDIFTypes.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = mSDIFTypes.hpp; sourceTree = "<group>"; };
+		317516832032F0BF00E54848 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				3109E2162024A1D7003895DD /* Info.plist */,
+				317516832032F0BF00E54848 /* module.modulemap */,
 			);
 			path = miniSDIF;
 			sourceTree = "<group>";
@@ -381,6 +383,7 @@
 				INFOPLIST_FILE = miniSDIF/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = miniSDIF/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.alexnadzharov.miniSDIF;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = NO;
@@ -403,6 +406,7 @@
 				INFOPLIST_FILE = miniSDIF/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = miniSDIF/module.modulemap;
 				PRODUCT_BUNDLE_IDENTIFIER = com.alexnadzharov.miniSDIF;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = NO;

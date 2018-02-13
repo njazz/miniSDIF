@@ -39,5 +39,7 @@ public:
     inline std::string description(){return _description;};
 
     int byteSize();
+
+    static bool hasIndexColumn(std::string signature);
 };
 #endif /* mSDIFTypes_hpp */

@@ -1,0 +1,6 @@
+framework module miniSDIF {
+    umbrella header "mSDIF.hpp"
+    
+    export *
+    module * { export * }
+}

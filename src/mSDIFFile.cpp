@@ -261,8 +261,13 @@ void MSDIFFile::applyTime()
     }
 }
 //
+MSDIFFrame* _remapFrame(MSDIFFrame* f1, MSDIFFrame* f2)
+{
+    // TODO
+    return f1;
+}
 
-MSDIFFrame* _mergeFramesProc(MSDIFFrame* f1, MSDIFFrame* f2, int& i1, int& i2)
+MSDIFFrame* _mergeFramesProc(MSDIFFrame* f1, MSDIFFrame* f2, size_t& i1, size_t& i2)
 {
     // resize matrices & remap indices for certain types
 
@@ -279,12 +284,12 @@ void MSDIFFile::mergeFrames(MSDIFFrameVector* frames2)
 {
     MSDIFFrameVector nf;
 
-    int f_c1 = frameCount();
-    int f_c2 = frames2->size();
+    size_t f_c1 = frameCount();
+    size_t f_c2 = frames2->size();
 
     while (f_c1) {
-        int i1 = frameCount() - f_c1;
-        int i2 = frames2->size() - f_c2;
+        size_t i1 = frameCount() - f_c1;
+        size_t i2 = frames2->size() - f_c2;
 
         while (f_c2) {
             nf.push_back(_mergeFramesProc(frames()[i1], frames2->at(i2), i1, i2));

@@ -47,24 +47,25 @@ const json MTypes = {
     { "1WIN", { { "description", "Window" },
                   { "columns", { "Samples" } },
                   { "type", mTFloat4 } } },
-    {
-        "IWIN", { { "description", "WindowInfo" },
-                    { "columns", { "WindowIdentifier", "WindowSize" } },
-                    { "type", mTFloat4 } }
-        // 1-row
-    },
-    { "1CHA", { { "description", "Channels" },
-                { "columns", { "Channel1", "Channel2" } },
-                { "type", mTFloat4 } },
+    { "IWIN", {
+                  { "description", "WindowInfo" },
+                  { "columns", { "WindowIdentifier", "WindowSize" } },
+                  { "type", mTFloat4 }
+                  // 1-row
+              } },
+    { "1CHA", { { "description", "Channels" }, { "columns", { "Channel1", "Channel2" } }, { "type", mTFloat4 } } },
     //
     //
     { "1FQ0", {} },
     //
     // Sinusoidal Modelling
-    { "1PIC", {} }, { "1TRC", { { "description", "SinusoidalTracks" }, { "columns", { "Index", "Frequency", "Amplitude", "Phase" } }, { "type", mTFloat4 }
+    { "1PIC", {} },
 
-                              } },
-    { "1HRM", {} }, { "1HRE", {} },
+    { "1TRC", { { "description", "SinusoidalTracks" }, { "columns", { "Index", "Frequency", "Amplitude", "Phase" } }, { "type", mTFloat4 } } },
+
+    { "1HRM", { { "description", "HarmonicPartials" }, { "columns", { "Index", "Frequency", "Amplitude", "Phase" } }, { "type", mTFloat4 } } },
+
+    { "1HRE", {} },
     //
     //
     { "1ENV", {} }, { "1TFC", {} }, { "1CEC", {} }, { "1ARA", {} }, { "1ARK", {} },
@@ -81,8 +82,7 @@ const json MTypes = {
     //
     { "1VUN", {} }, { "1VUF", {} }, { "1MRK", {} }, { "1VUV", {} },
     //
-    { "EMPM", {} }, { "EMJR", {} },
-    { "EFPM", {} }
+    { "EMPM", {} }, { "EMJR", {} }, { "EFPM", {} }
 };
 
 MSDIFType::MSDIFType(){};
@@ -131,4 +131,24 @@ int MSDIFType::byteSize()
         ret = 8;
 
     return ret;
+}
+
+bool MSDIFType::hasIndexColumn(std::string signature)
+{
+    json t1 = MTypes[signature];
+    if (t1.is_null())
+        return false;
+
+    json t2 = t1["description"];
+    if (t2.is_null())
+        return false;
+    std::vector<std::string> cols;
+
+    auto n = t1["columns"];
+
+    for (auto s : n) {
+        cols.push_back(s);
+    }
+
+    return (std::find(cols.begin(), cols.end(), "Index") != cols.end());
 }
