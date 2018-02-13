@@ -115,12 +115,35 @@ MSDIFMatrix::MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns,
     }
 
     newSize(header.rows, header.columns);
+
+    _hasIndexColumn = MSDIFType::hasIndexColumn(signature);
+}
+
+MSDIFMatrix::MSDIFMatrix(const MSDIFMatrix& m)
+{
+    header = m.header;
+    header.setSignature(m.header.signature);
+
+    MSDIFType* t = MSDIFType::fromSignature(m.header.signature);
+    if (t) {
+        header.dataType = t->dataType();
+        header.columns = (uint32_t)t->columnNames().size();
+    }
+
+    header.rows = m.header.rows;
+
+    newSize(header.rows, header.columns);
+
+    data = new char[matrixDataSize()];
+    memcpy(data, m.data, matrixDataSize());
+
+    _hasIndexColumn = m._hasIndexColumn;//MSDIFType::hasIndexColumn(header.signature);
 }
 
 MSDIFMatrix::~MSDIFMatrix()
 {
-    //    if (data)
-    //        free(data);
+    if (data)
+        free(data);
 }
 
 void MSDIFMatrix::newSize(uint32_t rows, uint32_t columns)

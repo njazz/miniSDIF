@@ -226,6 +226,18 @@ MSDIFFrameVector* MSDIFFile::framesWithSignature(std::string signature)
     return ret;
 }
 
+MSDIFFrameVector* MSDIFFile::framesWithNotSignature(std::string signature)
+{
+    MSDIFFrameVector* ret = new MSDIFFrameVector;
+
+    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
+        if (strncmp((*it)->signature(), signature.c_str(), 4))
+            ret->push_back(*it);
+    }
+
+    return ret;
+}
+
 //
 
 void MSDIFFile::addFrame(MSDIFFrame* fr)
@@ -240,6 +252,13 @@ void MSDIFFile::removeFrameAt(size_t idx)
 
     _frames.erase(_frames.begin() + idx);
 }
+
+void MSDIFFile::removeFrame(MSDIFFrame* fr)
+{
+    MSDIFFrameVector::iterator it = std::find(_frames.begin(), _frames.end(), fr);
+    if (it != _frames.end())
+        _frames.erase(it);
+}
 void MSDIFFile::insertFrame(size_t idx, MSDIFFrame* fr)
 {
     if (idx >= _frames.size())
@@ -253,6 +272,14 @@ void MSDIFFile::removeAllFrames()
     _frames.clear();
 }
 
+void MSDIFFile::removeFramesWithSignature(std::string signature)
+{
+    for (auto fr : _frames) {
+        if (!strncmp(fr->signature(), signature.c_str(), 4))
+            removeFrame(fr);
+    }
+}
+
 void MSDIFFile::applyTime()
 {
     for (auto f : _frames) {
@@ -260,43 +287,114 @@ void MSDIFFile::applyTime()
             f->applyTime();
     }
 }
-//
-MSDIFFrame* _remapFrame(MSDIFFrame* f1, MSDIFFrame* f2)
+
+inline size_t _maximumIndexValue(MSDIFFrameVector vec)
 {
-    // TODO
-    return f1;
+    size_t ret = 0;
+    for (auto v : vec) {
+        for (auto m : v->matrices()) {
+            if (ret < m->maximumIndexValue())
+                ret = m->maximumIndexValue();
+        }
+    }
+
+    return ret;
 }
 
-MSDIFFrame* _mergeFramesProc(MSDIFFrame* f1, MSDIFFrame* f2, size_t& i1, size_t& i2)
+//inline void _shiftIndices(MSDIFFrameVector* vec, size_t idx)
+//{
+//    for (auto v : *vec) {
+//        for (auto m : v->matrices()) {
+//            m->shiftIndices(idx);
+//        }
+//    }
+//}
+
+inline void _shiftIndices(MSDIFFrame* f, size_t idx)
 {
-    // resize matrices & remap indices for certain types
+    for (auto m : f->matrices()) {
+        m->shiftIndices(idx);
+    }
+}
+
+MSDIFFrame* _mergeFramesProc(MSDIFFrame* f1, MSDIFFrame* f2, size_t* i1, size_t* i2, size_t shift)
+{
+    if (!f2) {
+        if (!f1)
+            return 0;
+        else
+            return f1;
+    }
+    if (!f1) {
+        if (!f2)
+            return 0;
+        else
+            return f2;
+    }
 
     if (f1->time() < f2->time()) {
-        i1--;
+        (*i1)--;
         return f1;
     } else {
-        i2--;
-        return f2;
+        (*i2)--;
+
+        MSDIFFrame* nf = new MSDIFFrame(*f2);
+        _shiftIndices(nf, shift);
+        //
+        return nf;
     }
 }
 
-void MSDIFFile::mergeFrames(MSDIFFrameVector* frames2)
+void MSDIFFile::mergeFramesWithSignature(std::string signature, MSDIFFile* file)
 {
+    MSDIFFrameVector* frames1 = framesWithSignature(signature);
+
+    MSDIFFrameVector* frames2 = file->framesWithSignature(signature);
+
     MSDIFFrameVector nf;
 
-    size_t f_c1 = frameCount();
+    size_t shift = _maximumIndexValue(frames());
+
+    size_t f_c1 = frames1->size();
     size_t f_c2 = frames2->size();
 
-    while (f_c1) {
-        size_t i1 = frameCount() - f_c1;
-        size_t i2 = frames2->size() - f_c2;
+    while (f_c2 && f_c1) {
 
-        while (f_c2) {
-            nf.push_back(_mergeFramesProc(frames()[i1], frames2->at(i2), i1, i2));
-        }
+        MSDIFFrame* fr = _mergeFramesProc(frames2->at(frameCount() - f_c1), frames2->at(frames2->size() - f_c2), &f_c1, &f_c2, shift);
 
-        nf.push_back(frames()[i1]);
+        if (fr)
+            nf.push_back(fr);
+        else
+            f_c2--;
     }
 
-    replaceFrames(nf);
+    while (f_c2) {
+        nf.push_back(frames2->at(frames2->size() - f_c2));
+        f_c2--;
+    }
+    while (f_c1) {
+        nf.push_back(frames()[frameCount() - f_c1]);
+        f_c1--;
+    }
+
+    removeFramesWithSignature("1TRC");
+    for (MSDIFFrame* ff : nf)
+        addFrame(ff);
+}
+
+void MSDIFFile::setTimeOffset(float t_o)
+{
+    _timeOffset = t_o;
+    for (auto f : _frames) {
+        if (f->time())
+            f->setTimeOffset(t_o);
+    }
+}
+void MSDIFFile::setTimeScale(float t_s)
+{
+    _timeScale = t_s;
+    for (auto f : _frames) {
+        if (f->time())
+            f->setTimeScale(t_s);
+    }
 }

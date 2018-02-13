@@ -155,6 +155,25 @@
     XCTAssertEqual(arr.size(), 1);
     XCTAssertEqual(arr[0], m1);
     
+    float vv[8];
+    for (int i=0;i<8;i++)
+        vv[i] = i;
+    
+    m1->resize(2, 4);
+    XCTAssertEqual(m1->rows(), 2);
+    XCTAssertEqual(m1->columns(), 4);
+    
+    m1->setValues(vv);
+    float* vv2 = m1->values<float*>();
+    XCTAssertEqualWithAccuracy(vv2[0], 0, 0.001);
+    XCTAssertEqualWithAccuracy(vv2[4], 4, 0.001);
+    
+    XCTAssertEqual(f1.matrices()[0]->maximumIndexValue(),4);
+    
+    m1->shiftIndices(10);
+    
+    XCTAssertEqual(f1.matrices()[0]->maximumIndexValue(),14);
+
 }
 
 - (void)testFileHeader
@@ -222,6 +241,8 @@
     XCTAssertEqual(arr->at(0), f2);
     
     //
+    
+    
     
 }
 

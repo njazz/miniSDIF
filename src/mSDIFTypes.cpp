@@ -135,11 +135,11 @@ int MSDIFType::byteSize()
 
 bool MSDIFType::hasIndexColumn(std::string signature)
 {
-    json t1 = MTypes[signature];
+    auto t1 = MTypes[signature];
     if (t1.is_null())
         return false;
 
-    json t2 = t1["description"];
+    auto t2 = t1["description"];
     if (t2.is_null())
         return false;
     std::vector<std::string> cols;

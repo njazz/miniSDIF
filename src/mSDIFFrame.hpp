@@ -66,6 +66,7 @@ class MSDIFFrame {
 
 public:
     MSDIFFrame(std::string signature, int32_t streamID);
+    MSDIFFrame(MSDIFFrame& f);
 
     //
     char* signature() { return header.signature; }
@@ -92,6 +93,7 @@ public:
     std::string info();
 
     // non-destructive editing
+    // time
     void setTimeOffset(float t_o) { _timeOffset = t_o; }
     void setTimeScale(float t_s) { _timeScale = t_s; }
     float timeOffset() { return _timeOffset; }
@@ -102,6 +104,12 @@ public:
         _timeOffset = 0;
         _timeScale = 1;
     }
+    
+    // gain
+//    void setGain(float g);
+//    float gain();
+//    void applyGain();
+    
 };
 
 #endif /* mSDIFFrame_hpp */

@@ -60,10 +60,13 @@ class MSDIFMatrix {
 
 
     void _resizeRowsColumns(uint32_t rows,uint32_t columns);
+    
+    bool _hasIndexColumn = false;
 
 public:
     ///> @brief if the matrix type is not found, creates with supplied parameters
     MSDIFMatrix(std::string signature, uint32_t rows = 1, uint32_t columns = 1, uint32_t type = mTChar);
+    MSDIFMatrix(const MSDIFMatrix& m);
     ~MSDIFMatrix();
 
     int rows() { return header.rows; }
@@ -85,7 +88,37 @@ public:
     char* signature() { return header.signature; }
 
     std::string info();
-
+    
+    // editing
+//    void applyGain(float g);
+    
+    // for specific data types:
+    size_t maximumIndexValue()
+    {
+        if (!_hasIndexColumn) return 0;
+        
+        size_t ret = 0;
+        for (int i=0;i<header.rows;i++)
+        {
+            size_t v = rowAt<float>(i)[0];
+            if (v>ret) ret = v;
+        }
+        return ret;
+    }
+    
+    void shiftIndices(size_t idx)
+    {
+        if (!_hasIndexColumn) return ;
+        
+        for (int i=0;i<header.rows;i++)
+        {
+            //rowAt<float>(i)[0] += idx;
+            
+            ((float*)data)[header.columns*i] += idx;
+        }
+        
+    }
+    
     // ======= templates =======
 
     template <typename T>
@@ -97,7 +130,7 @@ public:
         if (header.columns < 1)
             return 0;
 
-        T* d = new T[header.rows];
+        T* d = new T[header.columns];
 
         // todo replace later
         for (int i = 0; i < header.columns; i++) {

@@ -84,6 +84,17 @@ MSDIFFrame::MSDIFFrame(std::string signature, int32_t streamID)
     header.streamID = streamID;
 }
 
+MSDIFFrame::MSDIFFrame(MSDIFFrame& f)
+{
+    header = f.header;
+    header.matrixCount=0;
+    
+    for (auto m : f.matrices())
+    {
+        addMatrix(new MSDIFMatrix(*m));
+    }
+}
+
 mFileError MSDIFFrame::fromFile(std::ifstream& file)
 {
     mFileError err = header.fromFile(file);

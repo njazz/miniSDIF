@@ -70,42 +70,48 @@ public:
     MSDIFFrameVector frames() { return _frames; };
 
     MSDIFFrameVector* framesWithSignature(std::string signature);
+    MSDIFFrameVector* framesWithNotSignature(std::string signature);
     MSDIFFrameVector* framesWithTimeRange(double start, double end);
     MSDIFFrameVector* framesWithStreamID(uint32_t streamID);
 
     uint32_t frameCount() { return (uint32_t)_frames.size(); }
 
     void addFrame(MSDIFFrame* fr);
+    void removeFrame(MSDIFFrame* fr);
     void removeFrameAt(size_t idx);
     void insertFrame(size_t idx, MSDIFFrame* fr);
+
     void removeAllFrames();
+    void removeFramesWithSignature(std::string signature);
 
     void replaceFrames(MSDIFFrameVector fv) { _frames = fv; }
 
     std::string info();
-
-    // non-destructive editing
-    void setTimeOffset(float t_o)
-    {
-        _timeOffset = t_o;
-        for (auto f : _frames) {
-            if (f->time())
-                f->setTimeOffset(t_o);
-        }
-    }
-    void setTimeScale(float t_s)
-    {
-        _timeScale = t_s;
-        for (auto f : _frames) {
-            if (f->time())
-                f->setTimeScale(t_s);
-        }
-    }
+    
+    // editing
+    void mergeFramesWithSignature(std::string signature, MSDIFFile* file);
+//    void reverse();
+    void applyTime();
+//    void applyGain();
+    
+    // non-destructive editing:
+    // time
+    void setTimeOffset(float t_o);
+    void setTimeScale(float t_s);
+    
     float timeOffset() { return _timeOffset; }
     float timeScale() { return _timeScale; }
-    void applyTime();
 
-    void mergeFrames(MSDIFFrameVector* frames);
+    // gain
+//    void setGain(float g);
+//    void setFadeIn(float f);
+//    void setFadeOut(float f);
+//    float gain();
+//    float fadeIn();
+//    float fadeOut();
+
+    
+    
 
     // ==========
     template <typename T>
