@@ -6,3 +6,7 @@ CMakeLists.txt.user
 miniSDIF.xcodeproj/xcuserdata/
 miniSDIF.xcodeproj/project.xcworkspace/
 
+
+miniSDIFTests/testWrite.sdif
+
+*.sdif
