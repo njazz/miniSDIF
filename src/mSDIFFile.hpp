@@ -69,9 +69,9 @@ public:
 
     MSDIFFrameVector frames() { return _frames; };
 
-    MSDIFFrameVector framesWithSignature(std::string signature);
-    MSDIFFrameVector framesWithTimeRange(double start, double end);
-    MSDIFFrameVector framesWithStreamID(uint32_t streamID);
+    MSDIFFrameVector* framesWithSignature(std::string signature);
+    MSDIFFrameVector* framesWithTimeRange(double start, double end);
+    MSDIFFrameVector* framesWithStreamID(uint32_t streamID);
 
     uint32_t frameCount() { return (uint32_t)_frames.size(); }
 
@@ -80,7 +80,7 @@ public:
     void insertFrame(size_t idx, MSDIFFrame* fr);
     void removeAllFrames();
 
-    void replaceFrames(MSDIFFrameVector fv){_frames = fv;}
+    void replaceFrames(MSDIFFrameVector fv) { _frames = fv; }
 
     std::string info();
 
@@ -105,6 +105,7 @@ public:
     float timeScale() { return _timeScale; }
     void applyTime();
 
+    void mergeFrames(MSDIFFrameVector* frames);
 
     // ==========
     template <typename T>

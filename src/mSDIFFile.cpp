@@ -190,37 +190,37 @@ std::string MSDIFFile::info()
     return ret;
 }
 
-MSDIFFrameVector MSDIFFile::framesWithTimeRange(double start, double end)
+MSDIFFrameVector* MSDIFFile::framesWithTimeRange(double start, double end)
 {
-    MSDIFFrameVector ret;
+    MSDIFFrameVector* ret = new MSDIFFrameVector;
 
     for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
         if (((*it)->time() >= start) && ((*it)->time() < end))
-            ret.push_back(*it);
+            ret->push_back(*it);
     }
 
     return ret;
 }
 
-MSDIFFrameVector MSDIFFile::framesWithStreamID(uint32_t streamID)
+MSDIFFrameVector* MSDIFFile::framesWithStreamID(uint32_t streamID)
 {
-    MSDIFFrameVector ret;
+    MSDIFFrameVector* ret = new MSDIFFrameVector;
 
     for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
         if ((*it)->streamID() == streamID)
-            ret.push_back(*it);
+            ret->push_back(*it);
     }
 
     return ret;
 }
 
-MSDIFFrameVector MSDIFFile::framesWithSignature(std::string signature)
+MSDIFFrameVector* MSDIFFile::framesWithSignature(std::string signature)
 {
-    MSDIFFrameVector ret;
+    MSDIFFrameVector* ret = new MSDIFFrameVector;
 
     for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
         if (!strncmp((*it)->signature(), signature.c_str(), 4))
-            ret.push_back(*it);
+            ret->push_back(*it);
     }
 
     return ret;
@@ -259,4 +259,39 @@ void MSDIFFile::applyTime()
         if (f->time())
             f->applyTime();
     }
+}
+//
+
+MSDIFFrame* _mergeFramesProc(MSDIFFrame* f1, MSDIFFrame* f2, int& i1, int& i2)
+{
+    // resize matrices & remap indices for certain types
+
+    if (f1->time() < f2->time()) {
+        i1--;
+        return f1;
+    } else {
+        i2--;
+        return f2;
+    }
+}
+
+void MSDIFFile::mergeFrames(MSDIFFrameVector* frames2)
+{
+    MSDIFFrameVector nf;
+
+    int f_c1 = frameCount();
+    int f_c2 = frames2->size();
+
+    while (f_c1) {
+        int i1 = frameCount() - f_c1;
+        int i2 = frames2->size() - f_c2;
+
+        while (f_c2) {
+            nf.push_back(_mergeFramesProc(frames()[i1], frames2->at(i2), i1, i2));
+        }
+
+        nf.push_back(frames()[i1]);
+    }
+
+    replaceFrames(nf);
 }
