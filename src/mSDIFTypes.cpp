@@ -37,57 +37,51 @@ const json MTypes = {
                   { "type", mTChar } } },
     //
     //
-    { "1GAI", {} },
-    { "1WIN", {} },
-    { "IWIN", {} },
-    { "1CHA", {} },
+    {
+        "1GAI", { { "description", "LinearGain" },
+                    { "columns", { "Gain" } },
+                    { "type", mTFloat4 } }
+        // 1-row
+    },
+
+    { "1WIN", { { "description", "Window" },
+                  { "columns", { "Samples" } },
+                  { "type", mTFloat4 } } },
+    {
+        "IWIN", { { "description", "WindowInfo" },
+                    { "columns", { "WindowIdentifier", "WindowSize" } },
+                    { "type", mTFloat4 } }
+        // 1-row
+    },
+    { "1CHA", { { "description", "Channels" },
+                { "columns", { "Channel1", "Channel2" } },
+                { "type", mTFloat4 } },
+    //
     //
     { "1FQ0", {} },
     //
     // Sinusoidal Modelling
-    { "1PIC", {} },
-    { "1TRC", { { "description", "SinusoidalTracks" },
-                  { "columns", { "Index", "Frequency", "Amplitude", "Phase" } },
-                  { "type", mTFloat4 }
+    { "1PIC", {} }, { "1TRC", { { "description", "SinusoidalTracks" }, { "columns", { "Index", "Frequency", "Amplitude", "Phase" } }, { "type", mTFloat4 }
 
-              } },
-    { "1HRM", {} },
-    { "1HRE", {} },
+                              } },
+    { "1HRM", {} }, { "1HRE", {} },
     //
     //
-    { "1ENV", {} },
-    { "1TFC", {} },
-    { "1CEC", {} },
-    { "1ARA", {} },
-    { "1ARK", {} },
+    { "1ENV", {} }, { "1TFC", {} }, { "1CEC", {} }, { "1ARA", {} }, { "1ARK", {} },
     //
-    { "1FOF", {} },
-    { "1RES", {} },
-    { "1DIS", {} },
-    { "1NOI", {} },
-    { "1FOB", {} },
-    { "1REB", {} },
+    { "1FOF", {} }, { "1RES", {} }, { "1DIS", {} }, { "1NOI", {} }, { "1FOB", {} }, { "1REB", {} },
     //
-    { "ISTF", {} },
-    { "1STF", {} },
+    { "ISTF", {} }, { "1STF", {} },
     //
-    { "INRG", {} },
-    { "1NRG", {} },
-    { "1BND", {} },
+    { "INRG", {} }, { "1NRG", {} }, { "1BND", {} },
     //
     { "1TDS", {} },
     //
-    { "1PEM", {} },
-    { "ITMR", {} },
-    { "ITMI", {} },
+    { "1PEM", {} }, { "ITMR", {} }, { "ITMI", {} },
     //
-    { "1VUN", {} },
-    { "1VUF", {} },
-    { "1MRK", {} },
-    { "1VUV", {} },
+    { "1VUN", {} }, { "1VUF", {} }, { "1MRK", {} }, { "1VUV", {} },
     //
-    { "EMPM", {} },
-    { "EMJR", {} },
+    { "EMPM", {} }, { "EMJR", {} },
     { "EFPM", {} }
 };
 
