@@ -35,7 +35,7 @@ struct MSDIFMatrixHeaderStruct {
 ///> @brief SDIF Matrix header
 struct MSDIFMatrixHeader : public MSDIFMatrixHeaderStruct {
 
-    void operator=(const MSDIFMatrixHeader& h);
+    void operator&=(const MSDIFMatrixHeader& h);
 
     mFileError fromFile(std::ifstream& file);
     mFileError toFile(std::ofstream& file);

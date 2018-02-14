@@ -14,7 +14,7 @@
 
 #include "mSDIFFrame.hpp"
 
-void MSDIFFrameHeader::operator=(const MSDIFFrameHeader& h)
+void MSDIFFrameHeader::operator&=(const MSDIFFrameHeader& h)
 {
     for (int i = 0; i < 4; i++)
         signature[i] = h.signature[i];
@@ -84,9 +84,9 @@ MSDIFFrame::MSDIFFrame(std::string signature, int32_t streamID)
     header.streamID = streamID;
 }
 
-MSDIFFrame::MSDIFFrame(MSDIFFrame& f)
+MSDIFFrame::MSDIFFrame(MSDIFFrame& f) : header(f.header)
 {
-    header = f.header;
+    //header = f.header;
     header.matrixCount=0;
     
     for (auto m : f.matrices())

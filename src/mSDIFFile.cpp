@@ -16,7 +16,7 @@
 
 #include "mSDIFFile.hpp"
 
-void MSDIFFileHeader::operator=(const MSDIFFileHeader& h)
+void MSDIFFileHeader::operator&=(const MSDIFFileHeader& h)
 {
     for (int i = 0; i < 4; i++)
         signature[i] = h.signature[i];
@@ -53,9 +53,9 @@ mFileError MSDIFFileHeader::fromFile(std::ifstream& file)
 
 mFileError MSDIFFileHeader::toFile(std::ofstream& file)
 {
-    MSDIFFileHeader* newHeader = new MSDIFFileHeader;
+    MSDIFFileHeader* newHeader = this;//new MSDIFFileHeader;
 
-    newHeader = this;
+    //newHeader = this;
 
     swapEndianness(newHeader->headerFrameSize);
     swapEndianness(newHeader->specificationVersion);
@@ -348,7 +348,6 @@ MSDIFFrame* _mergeFramesProc(MSDIFFrame* f1, MSDIFFrame* f2, size_t* i1, size_t*
 void MSDIFFile::mergeFramesWithSignature(std::string signature, MSDIFFile* file)
 {
     MSDIFFrameVector* frames1 = framesWithSignature(signature);
-
     MSDIFFrameVector* frames2 = file->framesWithSignature(signature);
 
     MSDIFFrameVector nf;
@@ -380,6 +379,9 @@ void MSDIFFile::mergeFramesWithSignature(std::string signature, MSDIFFile* file)
     removeFramesWithSignature("1TRC");
     for (MSDIFFrame* ff : nf)
         addFrame(ff);
+
+    delete frames1;
+    delete frames2;
 }
 
 void MSDIFFile::setTimeOffset(float t_o)

@@ -18,7 +18,7 @@
 
 #include <stdio.h>
 
-void MSDIFMatrixHeader::operator=(const MSDIFMatrixHeader& h)
+void MSDIFMatrixHeader::operator&=(const MSDIFMatrixHeader& h)
 {
     for (int i = 0; i < 4; i++)
         signature[i] = h.signature[i];
@@ -232,6 +232,7 @@ mFileError MSDIFMatrix::fromFile(std::ifstream& file)
 
     char* padding = new char[padding_size];
     file.read((char*)padding, padding_size);
+    delete[] padding;
 
     return meOK;
 }
