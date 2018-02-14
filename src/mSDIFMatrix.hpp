@@ -24,14 +24,15 @@
 #include <fstream>
 #include <iostream>
 
-///> \brief MSDIFMatrixHeaderStruct : base POD structure for SDIF Matrix i/o
+///> @brief base POD structure for SDIF Matrix file i/o
 struct MSDIFMatrixHeaderStruct {
-    char signature[4]; // matrix type
+    char signature[4];
     uint32_t dataType;
     uint32_t rows = 0;
     uint32_t columns = 0;
 };
 
+///> @brief SDIF Matrix header
 struct MSDIFMatrixHeader : public MSDIFMatrixHeaderStruct {
 
     void operator=(const MSDIFMatrixHeader& h);
@@ -44,35 +45,39 @@ struct MSDIFMatrixHeader : public MSDIFMatrixHeaderStruct {
     void setSignature(std::string s);
 };
 
-///> \brief MSDIFMatrix : class that represents SDIF matrix
+///> @brief class that represents SDIF matrix
 class MSDIFMatrix {
     friend class MSDIFFrame;
 
-    void* data = 0;
+    void* _data = 0;
 
     //
     mFileError fromFile(std::ifstream& file);
     mFileError toFile(std::ofstream& file);
 
-    MSDIFMatrixHeader header;
+    MSDIFMatrixHeader _header;
 
     MSDIFMatrix();
 
+    ///> @brief resize data storage and keep data
+    ///> @details this is called when number of columns needs to be changed
+    void _resizeRowsColumns(uint32_t rows, uint32_t columns);
 
-    void _resizeRowsColumns(uint32_t rows,uint32_t columns);
-    
+    // for edits
     bool _hasIndexColumn = false;
+    int _gainColumnIndex = -1;
 
 public:
-    ///> @brief if the matrix type is not found, creates with supplied parameters
+    ///> @brief if the matrix type is not found, creates with supplied parameters otherwise uses only 'rows' value
     MSDIFMatrix(std::string signature, uint32_t rows = 1, uint32_t columns = 1, uint32_t type = mTChar);
     MSDIFMatrix(const MSDIFMatrix& m);
     ~MSDIFMatrix();
 
-    int rows() { return header.rows; }
-    int columns() { return header.columns; }
+    int rows() { return _header.rows; }
+    int columns() { return _header.columns; }
 
     void newSize(uint32_t rows, uint32_t columns);
+
     void resize(uint32_t rows, uint32_t columns);
     void resizeRows(uint32_t rows);
 
@@ -85,127 +90,145 @@ public:
     uint32_t matrixDataSize();
     int paddingSize();
 
-    char* signature() { return header.signature; }
+    char* signature() { return _header.signature; }
 
     std::string info();
-    
-    // editing
-//    void applyGain(float g);
-    
-    // for specific data types:
-    size_t maximumIndexValue()
-    {
-        if (!_hasIndexColumn) return 0;
-        
-        size_t ret = 0;
-        for (int i=0;i<header.rows;i++)
-        {
-            size_t v = rowAt<float>(i)[0];
-            if (v>ret) ret = v;
-        }
-        return ret;
-    }
-    
-    void shiftIndices(size_t idx)
-    {
-        if (!_hasIndexColumn) return ;
-        
-        for (int i=0;i<header.rows;i++)
-        {
-            //rowAt<float>(i)[0] += idx;
-            
-            ((float*)data)[header.columns*i] += idx;
-        }
-        
-    }
-    
+
+    // ===== editing
+
+    void applyGain(float g);
+
+    // ===== for specific data types:
+
+    size_t maximumIndexValue();
+    void shiftIndices(size_t idx);
+
     // ======= templates =======
 
     template <typename T>
-    T* rowAt(size_t idx)
+    const T* data()
     {
-        if (idx >= (header.rows))
+        return _data;
+    }
+
+    template <typename T>
+    T* valuesAtRow(size_t idx)
+    {
+        if (idx >= (_header.rows))
             return 0;
 
-        if (header.columns < 1)
+        if (_header.columns < 1)
             return 0;
 
-        T* d = new T[header.columns];
+        T* d = new T[_header.columns];
 
         // todo replace later
-        for (int i = 0; i < header.columns; i++) {
-            d[i] = static_cast<T*>(data)[idx * header.columns + i];
+        for (int i = 0; i < _header.columns; i++) {
+            d[i] = static_cast<T*>(_data)[idx * _header.columns + i];
         }
 
         return d;
     }
 
     template <typename T>
-    T* columnAt(size_t idx)
+    T* valuesAtColumn(size_t idx)
     {
-        if (idx >= (header.columns))
+        if (idx >= (_header.columns))
             return 0;
 
-        if (header.rows < 1)
+        if (_header.rows < 1)
             return 0;
 
-        T* d = new T[header.rows];
+        T* d = new T[_header.rows];
 
         // todo: replace later
-        for (int i = 0; i < header.rows; i++) {
-            d[i] = static_cast<T*>(data)[i * header.columns + idx];
+        for (int i = 0; i < _header.rows; i++) {
+            d[i] = static_cast<T*>(_data)[i * _header.columns + idx];
         }
 
         return d;
     }
 
     template <typename T>
-    void setColumn(size_t idx, T* d)
+    void setColumnValues(size_t idx, T* d)
     {
-        if (idx >= (header.columns))
+        if (idx >= (_header.columns))
             return;
 
-        if (header.rows < 1)
+        if (_header.rows < 1)
             return;
 
         // todo: replace later
-        for (int i = 0; i < header.rows; i++) {
-            ((T*)data)[i * header.columns + idx] = d[i];
+        for (int i = 0; i < _header.rows; i++) {
+            ((T*)_data)[i * _header.columns + idx] = d[i];
         }
     }
+
+    template <typename T>
+    void setRowValues(size_t idx, T* d)
+    {
+        if (idx >= (_header.rows))
+            return;
+
+        if (_header.rows < 1)
+            return;
+
+        // todo: replace later
+        for (int i = 0; i < _header.columns; i++) {
+            ((T*)_data)[i + idx * _header.columns] = d[i];
+        }
+    }
+
+    // ==========
 
     template <typename T>
     bool is()
     {
-        return sizeof(T) == header.byteSize();
+        return sizeof(T) == _header.byteSize();
     }
 
     template <typename T>
     T values()
     {
-        if (!data)
+        if (!_data)
             return 0;
 
         void* ret = malloc(matrixDataSize());
-        memcpy(ret, data, matrixDataSize());
+        memcpy(ret, _data, matrixDataSize());
         return static_cast<T>(ret);
     }
 
     template <typename T>
     void setValues(T nv)
     {
-        if (!data)
+        if (!_data)
             return;
 
         for (int i = 0; i < matrixDataSize(); i++)
-            ((char*)data)[i] = ((char*)nv)[i];
+            ((char*)_data)[i] = ((char*)nv)[i];
+    }
+
+    template <typename T>
+    void setCellValue(size_t x, size_t y, T d)
+    {
+        if (y >= (_header.rows))
+            return;
+
+        if (x >= (_header.columns))
+            return;
+
+        if (_header.rows < 1)
+            return;
+
+        // todo: replace later
+        ((T*)_data)[x + y * _header.columns] = d;
     }
 };
 
 template <>
 std::string MSDIFMatrix::values<std::string>();
 
-template<>
+template <>
 void MSDIFMatrix::setValues<std::string>(std::string nv);
 
 #endif /* mSDIFMatrix_hpp */

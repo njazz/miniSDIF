@@ -101,90 +101,91 @@ MSDIFMatrix::MSDIFMatrix()
 
 MSDIFMatrix::MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns, uint32_t type)
 {
-    header.setSignature(signature);
-    header.columns = columns;
-    header.rows = rows;
-    header.dataType = type;
+    _header.setSignature(signature);
+    _header.columns = columns;
+    _header.rows = rows;
+    _header.dataType = type;
 
-    data = 0;
+    _data = 0;
 
     MSDIFType* t = MSDIFType::fromSignature(signature);
     if (t) {
-        header.dataType = t->dataType();
-        header.columns = (uint32_t)t->columnNames().size();
+        _header.dataType = t->dataType();
+        _header.columns = (uint32_t)t->columnNames().size();
     }
 
-    newSize(header.rows, header.columns);
+    newSize(_header.rows, _header.columns);
 
     _hasIndexColumn = MSDIFType::hasIndexColumn(signature);
+    _gainColumnIndex = MSDIFType::columnIndex(signature, "Amplitude");
 }
 
 MSDIFMatrix::MSDIFMatrix(const MSDIFMatrix& m)
 {
-    header = m.header;
-    header.setSignature(m.header.signature);
+    _header = m._header;
+    _header.setSignature(m._header.signature);
 
-    MSDIFType* t = MSDIFType::fromSignature(m.header.signature);
+    MSDIFType* t = MSDIFType::fromSignature(m._header.signature);
     if (t) {
-        header.dataType = t->dataType();
-        header.columns = (uint32_t)t->columnNames().size();
+        _header.dataType = t->dataType();
+        _header.columns = (uint32_t)t->columnNames().size();
     }
+    _header.rows = m._header.rows;
 
-    header.rows = m.header.rows;
+    newSize(_header.rows, _header.columns);
 
-    newSize(header.rows, header.columns);
-
-    data = new char[matrixDataSize()];
-    memcpy(data, m.data, matrixDataSize());
+    _data = new char[matrixDataSize()];
+    memcpy(_data, m._data, matrixDataSize());
 
     _hasIndexColumn = m._hasIndexColumn;//MSDIFType::hasIndexColumn(header.signature);
+    _gainColumnIndex = m._gainColumnIndex;
 }
 
 MSDIFMatrix::~MSDIFMatrix()
 {
-    if (data)
-        free(data);
+    if (_data)
+        free(_data);
 }
 
 void MSDIFMatrix::newSize(uint32_t rows, uint32_t columns)
 {
-    if (data)
-        free(data);
+    if (_data)
+        free(_data);
 
-    header.rows = rows;
-    header.columns = columns;
-    data = malloc(matrixDataSize());
+    _header.rows = rows;
+    _header.columns = columns;
+    _data = malloc(matrixDataSize());
 }
 
 void MSDIFMatrix::resizeRows(uint32_t rows)
 {
-    float* oldData = (float*)data;
+    float* oldData = (float*)_data;
     size_t oldDataSize = matrixDataSize();
 
-    header.rows = rows;
-    data = malloc(matrixDataSize());
+    _header.rows = rows;
+    _data = malloc(matrixDataSize());
 
     if (!oldData)
         return;
 
     if (matrixDataSize() < oldDataSize)
         oldDataSize = matrixDataSize();
-    memcpy(data, oldData, oldDataSize);
+    memcpy(_data, oldData, oldDataSize);
 
     delete oldData;
 }
 
 void MSDIFMatrix::_resizeRowsColumns(uint32_t rows, uint32_t columns)
 {
-    float* oldData = (float*)data;
-    int n_rows = header.rows;
-    int n_cols = header.columns;
+    float* oldData = (float*)_data;
+    int n_rows = _header.rows;
+    int n_cols = _header.columns;
 
-    int old_cols = header.columns;
+    int old_cols = _header.columns;
 
-    header.rows = rows;
-    header.columns = columns;
-    data = malloc(matrixDataSize());
+    _header.rows = rows;
+    _header.columns = columns;
+    _data = malloc(matrixDataSize());
 
     if (rows < n_rows)
         n_rows = rows;
@@ -194,15 +195,15 @@ void MSDIFMatrix::_resizeRowsColumns(uint32_t rows, uint32_t columns)
     for (int x = 0; x < n_cols; x++)
         for (int y = 0; y < n_rows; y++) {
             int old_idx = x + y * old_cols;
-            int new_idx = x + y * header.columns;
+            int new_idx = x + y * _header.columns;
 
-            ((float*)data)[new_idx] = oldData[old_idx];
+            ((float*)_data)[new_idx] = oldData[old_idx];
         }
 }
 
 void MSDIFMatrix::resize(uint32_t rows, uint32_t columns)
 {
-    if (columns == header.columns)
+    if (columns == _header.columns)
         resizeRows(rows);
     else
         _resizeRowsColumns(rows, columns);
@@ -210,23 +211,23 @@ void MSDIFMatrix::resize(uint32_t rows, uint32_t columns)
 
 mFileError MSDIFMatrix::fromFile(std::ifstream& file)
 {
-    header.fromFile(file);
+    _header.fromFile(file);
 
     //        if (byteSize == 0)
     //            return meBadMatrixDataSize;
 
     //size_t matrix_data_size = header.rows * header.columns * header.byteSize();
 
-    data = new char[matrixDataSize()];
-    file.read((char*)data, matrixDataSize());
+    _data = new char[matrixDataSize()];
+    file.read((char*)_data, matrixDataSize());
 
-    if (header.dataType == mTFloat4)
-        for (int i = 0; i < header.rows * header.columns; i++) {
-            swapEndianness(((float*)data)[i]);
+    if (_header.dataType == mTFloat4)
+        for (int i = 0; i < _header.rows * _header.columns; i++) {
+            swapEndianness(((float*)_data)[i]);
         }
 
     int padding_size = (matrixDataSize() % 8) ? (8 - (matrixDataSize() % 8)) : 0;
-    if ((matrixDataSize() % 8) && (header.byteSize() == 4))
+    if ((matrixDataSize() % 8) && (_header.byteSize() == 4))
         padding_size = 4;
 
     char* padding = new char[padding_size];
@@ -237,13 +238,13 @@ mFileError MSDIFMatrix::fromFile(std::ifstream& file)
 
 uint32_t MSDIFMatrix::matrixDataSize()
 {
-    return header.rows * header.columns * header.byteSize();
+    return _header.rows * _header.columns * _header.byteSize();
 }
 
 inline int MSDIFMatrix::paddingSize()
 {
     int padding_size = (matrixDataSize() % 8) ? (8 - (matrixDataSize() % 8)) : 0;
-    if ((matrixDataSize() % 8) && (header.byteSize() == 4))
+    if ((matrixDataSize() % 8) && (_header.byteSize() == 4))
         padding_size = 4;
 
     return padding_size;
@@ -254,7 +255,7 @@ mFileError MSDIFMatrix::toFile(std::ofstream& file)
     printf("write matrix\n");
     printf("write: %s", info().c_str());
 
-    header.toFile(file);
+    _header.toFile(file);
 
     printf("write: %s", info().c_str());
 
@@ -262,15 +263,15 @@ mFileError MSDIFMatrix::toFile(std::ofstream& file)
 
     char* vv = values<char*>();
 
-    if (header.dataType != mTChar)
-        for (int i = 0; i < header.rows * header.columns; i++) {
+    if (_header.dataType != mTChar)
+        for (int i = 0; i < _header.rows * _header.columns; i++) {
             ((float*)b_data)[i] = ((float*)vv)[i];
 
             // todo: ???
             swapEndianness(((float*)b_data)[i]);
         }
     else
-        for (int i = 0; i < header.rows * header.columns; i++) {
+        for (int i = 0; i < _header.rows * _header.columns; i++) {
             ((char*)b_data)[i] = ((char*)vv)[i];
 
             // todo: ???
@@ -296,25 +297,66 @@ std::string MSDIFMatrix::info()
 
     char s[5];
     for (int i = 0; i < 4; i++)
-        s[i] = header.signature[i];
+        s[i] = _header.signature[i];
     s[4] = '\0';
 
     ret += "--[Matrix] type: " + std::string(s);
-    ret += " Cell size: " + std::to_string(header.byteSize());
-    ret += " Rows: " + std::to_string(header.rows);
-    ret += " Columns: " + std::to_string(header.columns);
+    ret += " Cell size: " + std::to_string(_header.byteSize());
+    ret += " Rows: " + std::to_string(_header.rows);
+    ret += " Columns: " + std::to_string(_header.columns);
     ret += "\n";
 
     return ret;
 }
 
+void MSDIFMatrix::applyGain(float g)
+{
+    if (!_gainColumnIndex) return;
+
+    for (int i=0;i<_header.rows;i++)
+    {
+        float gain = valuesAtRow<float>(i)[_gainColumnIndex];
+        setCellValue(_gainColumnIndex,i,gain*g);
+
+    }
+}
+
+size_t MSDIFMatrix::maximumIndexValue()
+{
+    if (!_hasIndexColumn) return 0;
+    
+    size_t ret = 0;
+    for (int i=0;i<_header.rows;i++)
+    {
+        size_t v = valuesAtRow<float>(i)[0];
+        if (v>ret) ret = v;
+    }
+    return ret;
+}
+
+void MSDIFMatrix::shiftIndices(size_t idx)
+{
+    if (!_hasIndexColumn) return ;
+    
+    for (int i=0;i<_header.rows;i++)
+    {
+        //rowAt<float>(i)[0] += idx;
+        
+        // todo: check if index is 1st column
+        ((float*)_data)[_header.columns*i] += idx;
+    }
+    
+}
+
+// ==========
+
 template <>
 void MSDIFMatrix::setValues<std::string>(std::string nv)
 {
-    if (data)
-        free(data);
+    if (_data)
+        free(_data);
 
-    data = malloc(nv.length());
+    _data = malloc(nv.length());
 
     setValues<char*>(const_cast<char*>(nv.c_str()));
 }
@@ -322,11 +364,11 @@ void MSDIFMatrix::setValues<std::string>(std::string nv)
 template <>
 std::string MSDIFMatrix::values<std::string>()
 {
-    if (!data)
+    if (!_data)
         return "";
 
     char ret[matrixDataSize()];
     for (int i = 0; i < matrixDataSize(); i++)
-        ret[i] = ((char*)data)[i];
+        ret[i] = ((char*)_data)[i];
     return std::string((char*)ret);
 }

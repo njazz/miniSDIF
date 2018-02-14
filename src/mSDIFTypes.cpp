@@ -13,7 +13,7 @@
 //  Created on 03/02/2018.
 
 // /////
-// This file is optional. It aims to provide templates when creating new SDIF matrices/frames.
+// This file can be replaced with another implementation. It aims to provide templates when creating new SDIF matrices/frames.
 // /////
 
 #include "mSDIFTypes.hpp"
@@ -151,4 +151,26 @@ bool MSDIFType::hasIndexColumn(std::string signature)
     }
 
     return (std::find(cols.begin(), cols.end(), "Index") != cols.end());
+}
+
+int MSDIFType::columnIndex(std::string signature, std::string columnName)
+{
+    auto t1 = MTypes[signature];
+    if (t1.is_null())
+        return false;
+
+    auto t2 = t1["description"];
+    if (t2.is_null())
+        return false;
+    std::vector<std::string> cols;
+
+    auto n = t1["columns"];
+
+    for (auto s : n) {
+        cols.push_back(s);
+    }
+
+    auto it = std::find(cols.begin(), cols.end(), columnName);
+    int idx = std::distance(it, cols.begin());
+    return (it != cols.end()) ? idx : -1;
 }

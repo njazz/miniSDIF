@@ -63,6 +63,7 @@ class MSDIFFrame {
     //
     float _timeOffset = 0;
     float _timeScale = 1;
+    float _gain = 1;
 
 public:
     MSDIFFrame(std::string signature, int32_t streamID);
@@ -81,7 +82,6 @@ public:
     uint32_t matrixCount() { return header.matrixCount; }
 
     //
-
     MSDIFMatrixVector& matrices() { return _matrices; }; // todo
     MSDIFMatrixVector matricesWithSignature(std::string signature);
 
@@ -106,9 +106,14 @@ public:
     }
     
     // gain
-//    void setGain(float g);
-//    float gain();
-//    void applyGain();
+    void setGain(float g){_gain = g;}
+    float gain() {return _gain;}
+    void applyGain()
+    {
+          for (auto m : _matrices)
+              m->applyGain(_gain);
+          _gain = 1;
+    }
     
 };
 

@@ -171,7 +171,7 @@ MSDIFMatrixVector MSDIFFrame::matricesWithSignature(std::string signature)
     MSDIFMatrixVector ret;
 
     for (MSDIFMatrixVector::iterator it = _matrices.begin(); it != _matrices.end(); ++it) {
-        if (!strncmp((*it)->header.signature, signature.c_str(), 4))
+        if (!strncmp((*it)->_header.signature, signature.c_str(), 4))
             ret.push_back(*it);
     }
 
