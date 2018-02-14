@@ -153,7 +153,7 @@ bool MSDIFType::hasIndexColumn(std::string signature)
     return (std::find(cols.begin(), cols.end(), "Index") != cols.end());
 }
 
-int MSDIFType::columnIndex(std::string signature, std::string columnName)
+long MSDIFType::columnIndex(std::string signature, std::string columnName)
 {
     auto t1 = MTypes[signature];
     if (t1.is_null())
@@ -171,6 +171,6 @@ int MSDIFType::columnIndex(std::string signature, std::string columnName)
     }
 
     auto it = std::find(cols.begin(), cols.end(), columnName);
-    int idx = std::distance(it, cols.begin());
+    long idx = std::distance(it, cols.begin());
     return (it != cols.end()) ? idx : -1;
 }

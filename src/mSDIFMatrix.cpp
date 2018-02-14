@@ -18,7 +18,7 @@
 
 #include <stdio.h>
 
-void MSDIFMatrixHeader::operator&=(const MSDIFMatrixHeader& h)
+MSDIFMatrixHeader& MSDIFMatrixHeader::operator=(const MSDIFMatrixHeader& h)
 {
     for (int i = 0; i < 4; i++)
         signature[i] = h.signature[i];
@@ -26,6 +26,8 @@ void MSDIFMatrixHeader::operator&=(const MSDIFMatrixHeader& h)
     dataType = h.dataType;
     rows = h.rows;
     columns = h.columns;
+
+    return *this;
 };
 
 mFileError MSDIFMatrixHeader::fromFile(std::ifstream& file)
@@ -117,7 +119,7 @@ MSDIFMatrix::MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns,
     newSize(_header.rows, _header.columns);
 
     _hasIndexColumn = MSDIFType::hasIndexColumn(signature);
-    _gainColumnIndex = MSDIFType::columnIndex(signature, "Amplitude");
+    _gainColumnIndex = (int)MSDIFType::columnIndex(signature, "Amplitude");
 }
 
 MSDIFMatrix::MSDIFMatrix(const MSDIFMatrix& m)

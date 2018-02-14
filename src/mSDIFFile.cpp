@@ -16,7 +16,7 @@
 
 #include "mSDIFFile.hpp"
 
-void MSDIFFileHeader::operator&=(const MSDIFFileHeader& h)
+MSDIFFileHeader& MSDIFFileHeader::operator=(const MSDIFFileHeader& h)
 {
     for (int i = 0; i < 4; i++)
         signature[i] = h.signature[i];
@@ -24,6 +24,8 @@ void MSDIFFileHeader::operator&=(const MSDIFFileHeader& h)
     headerFrameSize = h.headerFrameSize;
     specificationVersion = h.specificationVersion;
     padding = h.padding;
+
+    return *this;
 };
 
 mFileError MSDIFFileHeader::fromFile(std::ifstream& file)

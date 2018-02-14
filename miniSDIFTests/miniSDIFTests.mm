@@ -34,12 +34,15 @@
 
     // while there are incomplete type descriptions:
     t = MSDIFType::fromSignature("1MRK");
-
     XCTAssert(t == 0);
-    
+
     //
     XCTAssert(MSDIFType::hasIndexColumn("1TRC"));
     XCTAssert(!MSDIFType::hasIndexColumn("1NVT"));
+    
+    //
+    XCTAssertEqual(MSDIFType::fromSignature("1TRC")->byteSize(), 4);
+    XCTAssertEqual(MSDIFType::fromSignature("1NVT")->byteSize(), 1);
     
 }
 
@@ -94,6 +97,12 @@
     printf("%i", strncmp(m2.values<std::string>().c_str(), "test string", 11));
     XCTAssert(strncmp(m2.values<std::string>().c_str(), "test string", 11));
 
+    MSDIFMatrix m3(m2);
+    for (int i=0;i<4;i++)
+        XCTAssertEqual(m3.signature()[i], m2.signature()[i]);
+    XCTAssertEqual(m3.rows(), m2.rows());
+    XCTAssertEqual(m3.columns(), m2.columns());
+
     // todo file
 }
 
@@ -146,34 +155,41 @@
 
     f1.removeMatrixAt(0);
     f1.removeAllMatrices();
-    
+
     //
     f1.addMatrix(m1);
     f1.addMatrix(m2);
-    
+
     auto arr = f1.matricesWithSignature("1TRC");
     XCTAssertEqual(arr.size(), 1);
     XCTAssertEqual(arr[0], m1);
-    
+
     float vv[8];
-    for (int i=0;i<8;i++)
+    for (int i = 0; i < 8; i++)
         vv[i] = i;
-    
+
     m1->resize(2, 4);
     XCTAssertEqual(m1->rows(), 2);
     XCTAssertEqual(m1->columns(), 4);
-    
+
     m1->setValues(vv);
     float* vv2 = m1->values<float*>();
     XCTAssertEqualWithAccuracy(vv2[0], 0, 0.001);
     XCTAssertEqualWithAccuracy(vv2[4], 4, 0.001);
-    
-    XCTAssertEqual(f1.matrices()[0]->maximumIndexValue(),4);
-    
-    m1->shiftIndices(10);
-    
-    XCTAssertEqual(f1.matrices()[0]->maximumIndexValue(),14);
 
+    XCTAssertEqual(f1.matrices()[0]->maximumIndexValue(), 4);
+
+    m1->shiftIndices(10);
+
+    XCTAssertEqual(f1.matrices()[0]->maximumIndexValue(), 14);
+    
+    MSDIFFrame f2(f1);
+    
+    for (int i=0;i<4;i++)
+        XCTAssertEqual(f2.signature()[i], f1.signature()[i]);
+    XCTAssertEqual(f2.matrixCount(), f1.matrixCount());
+    XCTAssertEqual(f2.matrices()[0]->maximumIndexValue(), f1.matrices()[0]->maximumIndexValue());
+    
 }
 
 - (void)testFileHeader
@@ -196,53 +212,56 @@
 - (void)testFile
 {
     MSDIFFile ff;
-    
+
     XCTAssert(ff.frameCount() == 0);
-    
-    MSDIFFrame* f1 = new MSDIFFrame("1TRC",0);
-    MSDIFFrame* f2 = new MSDIFFrame("1NVT",-1);
-    
+
+    MSDIFFrame* f1 = new MSDIFFrame("1TRC", 0);
+    MSDIFFrame* f2 = new MSDIFFrame("1NVT", -1);
+
     ff.addFrame(f1);
     XCTAssert(ff.frameCount() == 1);
     ff.addFrame(f2);
     XCTAssert(ff.frameCount() == 2);
-    
+
     ff.insertFrame(0, f1);
     XCTAssert(ff.frames().at(0) == f1);
     XCTAssert(ff.frames().at(1) == f1);
     XCTAssert(ff.frames().at(2) == f2);
-    
+
     XCTAssertEqual(ff.frames().size(), 3);
-    
+
     ff.removeFrameAt(1);
     XCTAssertEqual(ff.frameCount(), 2);
     XCTAssert(ff.frames().at(0) == f1);
     XCTAssert(ff.frames().at(1) == f2);
-    
+
     ff.removeFrameAt(0);
     XCTAssertEqual(ff.frameCount(), 1);
-    
+
     ff.removeAllFrames();
     XCTAssertEqual(ff.frameCount(), 0);
-    
+
     ff.removeFrameAt(0);
     ff.removeAllFrames();
-    
+
     //
     ff.addFrame(f1);
     ff.addFrame(f2);
-    
+
     auto arr = ff.framesWithSignature("1TRC");
     XCTAssertEqual(arr->size(), 1);
     XCTAssertEqual(arr->at(0), f1);
-    
+
     arr = ff.framesWithStreamID(-1);
     XCTAssertEqual(arr->size(), 1);
     XCTAssertEqual(arr->at(0), f2);
-    
+
     //
     
+    MSDIFFile ff2(ff);
     
+    for (int i=0;i<4;i++)
+        XCTAssertEqual(ff2.frameCount(), ff.frameCount());
     
 }
 

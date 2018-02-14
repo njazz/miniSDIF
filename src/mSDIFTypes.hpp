@@ -42,6 +42,6 @@ public:
 
     static bool hasIndexColumn(std::string signature);
 
-    static int columnIndex(std::string signature, std::string columnName);
+    static long columnIndex(std::string signature, std::string columnName);
 };
 #endif /* mSDIFTypes_hpp */

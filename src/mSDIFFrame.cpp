@@ -14,7 +14,7 @@
 
 #include "mSDIFFrame.hpp"
 
-void MSDIFFrameHeader::operator&=(const MSDIFFrameHeader& h)
+MSDIFFrameHeader& MSDIFFrameHeader::operator=(const MSDIFFrameHeader& h)
 {
     for (int i = 0; i < 4; i++)
         signature[i] = h.signature[i];
@@ -23,6 +23,8 @@ void MSDIFFrameHeader::operator&=(const MSDIFFrameHeader& h)
     time = h.time;
     streamID = h.streamID;
     matrixCount = h.matrixCount;
+
+    return *this;
 };
 
 mFileError MSDIFFrameHeader::fromFile(std::ifstream& file)

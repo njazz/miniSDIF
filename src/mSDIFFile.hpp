@@ -36,7 +36,7 @@ struct MSDIFFileHeaderStruct {
 };
 
 struct MSDIFFileHeader : public MSDIFFileHeaderStruct {
-    void operator&=(const MSDIFFileHeader& h);
+    MSDIFFileHeader& operator=(const MSDIFFileHeader& h);
 
     mFileError fromFile(std::ifstream& file);
     mFileError toFile(std::ofstream& file);

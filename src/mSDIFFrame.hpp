@@ -35,7 +35,7 @@ struct MSDIFFrameHeaderStruct {
 };
 
 struct MSDIFFrameHeader : public MSDIFFrameHeaderStruct {
-    void operator&=(const MSDIFFrameHeader& h);
+    MSDIFFrameHeader& operator=(const MSDIFFrameHeader& h);
 
     mFileError fromFile(std::ifstream& file);
     mFileError toFile(std::ofstream& file);
