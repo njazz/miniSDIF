@@ -61,6 +61,9 @@ class MSDIFFile {
     float _timeOffset = 0;
     float _timeScale = 1;
 
+    //
+    void _mergeFramesWithSameTime();
+
 public:
     MSDIFFile();
 
@@ -87,31 +90,30 @@ public:
     void replaceFrames(MSDIFFrameVector fv) { _frames = fv; }
 
     std::string info();
-    
+
     // editing
     void mergeFramesWithSignature(std::string signature, MSDIFFile* file);
-//    void reverse();
+    void sortFramesByTime();
+
+    //    void reverse();
     void applyTime();
-//    void applyGain();
-    
+    //    void applyGain();
+
     // non-destructive editing:
     // time
     void setTimeOffset(float t_o);
     void setTimeScale(float t_s);
-    
+
     float timeOffset() { return _timeOffset; }
     float timeScale() { return _timeScale; }
 
     // gain
-//    void setGain(float g);
-//    void setFadeIn(float f);
-//    void setFadeOut(float f);
-//    float gain();
-//    float fadeIn();
-//    float fadeOut();
-
-    
-    
+    //    void setGain(float g);
+    //    void setFadeIn(float f);
+    //    void setFadeOut(float f);
+    //    float gain();
+    //    float fadeIn();
+    //    float fadeOut();
 
     // ==========
     template <typename T>

@@ -114,6 +114,9 @@ public:
               m->applyGain(_gain);
           _gain = 1;
     }
+
+    //
+    void mergeWithFrame(MSDIFFrame *frame2);
     
 };
 

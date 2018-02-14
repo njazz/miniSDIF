@@ -16,6 +16,8 @@
 
 #include "mSDIFFile.hpp"
 
+#include "math.h"
+
 MSDIFFileHeader& MSDIFFileHeader::operator=(const MSDIFFileHeader& h)
 {
     for (int i = 0; i < 4; i++)
@@ -55,7 +57,7 @@ mFileError MSDIFFileHeader::fromFile(std::ifstream& file)
 
 mFileError MSDIFFileHeader::toFile(std::ofstream& file)
 {
-    MSDIFFileHeader* newHeader = this;//new MSDIFFileHeader;
+    MSDIFFileHeader* newHeader = this; //new MSDIFFileHeader;
 
     //newHeader = this;
 
@@ -321,30 +323,56 @@ inline void _shiftIndices(MSDIFFrame* f, size_t idx)
 
 MSDIFFrame* _mergeFramesProc(MSDIFFrame* f1, MSDIFFrame* f2, size_t* i1, size_t* i2, size_t shift)
 {
-    if (!f2) {
-        if (!f1)
-            return 0;
-        else
-            return f1;
-    }
-    if (!f1) {
-        if (!f2)
-            return 0;
-        else
-            return f2;
-    }
+//    if (!f2) {
+//        if (!f1)
+//            return 0;
+//        else
+//            return f1;
+//    }
+//    if (!f1) {
+//        if (!f2)
+//            return 0;
+//        else
+//            return f2;
+//    }
 
-    if (f1->time() < f2->time()) {
+    if (f1->time() > f2->time()) {
         (*i1)--;
-        return f1;
+        return new MSDIFFrame(*f1);
     } else {
-        (*i2)--;
-
         MSDIFFrame* nf = new MSDIFFrame(*f2);
         _shiftIndices(nf, shift);
+
+        (*i2)--;
         //
         return nf;
     }
+}
+
+bool _sortFramesByTimePredicate(MSDIFFrame* f1, MSDIFFrame* f2)
+{
+    return f1->time() < f2->time();
+}
+
+void MSDIFFile::sortFramesByTime()
+{
+    std::sort(_frames.begin(), _frames.end(), _sortFramesByTimePredicate);
+}
+
+void MSDIFFile::_mergeFramesWithSameTime()
+{
+    std::vector<MSDIFFrame*> framesToDelete;
+
+    for (int i = 0; i < frameCount() - 1; i++) {
+        if (fabs(frames()[i]->time() - frames()[i + 1]->time()) < 0.000001) {
+            frames()[i]->mergeWithFrame(frames()[i + 1]);
+            framesToDelete.push_back(frames()[i + 1]);
+            i++;
+        }
+    }
+
+    for (auto a : framesToDelete)
+        removeFrame(a);
 }
 
 void MSDIFFile::mergeFramesWithSignature(std::string signature, MSDIFFile* file)
@@ -354,33 +382,42 @@ void MSDIFFile::mergeFramesWithSignature(std::string signature, MSDIFFile* file)
 
     MSDIFFrameVector nf;
 
-    size_t shift = _maximumIndexValue(frames());
+    size_t shift = _maximumIndexValue(*frames1);
 
     size_t f_c1 = frames1->size();
     size_t f_c2 = frames2->size();
 
-    while (f_c2 && f_c1) {
 
-        MSDIFFrame* fr = _mergeFramesProc(frames2->at(frameCount() - f_c1), frames2->at(frames2->size() - f_c2), &f_c1, &f_c2, shift);
 
-        if (fr)
-            nf.push_back(fr);
-        else
-            f_c2--;
+//    while (f_c2 && f_c1) {
+
+//        MSDIFFrame* fr = _mergeFramesProc(frames2->at(frameCount() - f_c1), frames2->at(frames2->size() - f_c2), &f_c1, &f_c2, shift);
+
+//        if (fr)
+//            nf.push_back(fr);
+//        else
+//            f_c2--;
+//    }
+
+//    while (f_c2) {
+//        nf.push_back(frames2->at(frames2->size() - f_c2));
+//        f_c2--;
+//    }
+//    while (f_c1) {
+//        nf.push_back(frames1->at(frames1->size() - f_c1));
+//        f_c1--;
+//    }
+
+    //removeFramesWithSignature("1TRC");
+    for (MSDIFFrame* ff : *frames2)
+    {
+        MSDIFFrame* sf = new MSDIFFrame(*ff);
+        _shiftIndices(sf, shift);
+        addFrame(sf);
     }
 
-    while (f_c2) {
-        nf.push_back(frames2->at(frames2->size() - f_c2));
-        f_c2--;
-    }
-    while (f_c1) {
-        nf.push_back(frames()[frameCount() - f_c1]);
-        f_c1--;
-    }
-
-    removeFramesWithSignature("1TRC");
-    for (MSDIFFrame* ff : nf)
-        addFrame(ff);
+    sortFramesByTime();
+    _mergeFramesWithSameTime();
 
     delete frames1;
     delete frames2;

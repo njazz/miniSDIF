@@ -72,8 +72,9 @@ mFileError MSDIFFrameHeader::toFile(std::ofstream& file)
 
 void MSDIFFrameHeader::setSignature(std::string s)
 {
-    if (s.length()<4) return;
-    for (int i=0;i<4;i++)
+    if (s.length() < 4)
+        return;
+    for (int i = 0; i < 4; i++)
         signature[i] = s[i];
 }
 //
@@ -86,15 +87,17 @@ MSDIFFrame::MSDIFFrame(std::string signature, int32_t streamID)
     header.streamID = streamID;
 }
 
-MSDIFFrame::MSDIFFrame(MSDIFFrame& f) : header(f.header)
+MSDIFFrame::MSDIFFrame(MSDIFFrame& f)
+    : header(f.header)
 {
     //header = f.header;
-    header.matrixCount=0;
-    
-    for (auto m : f.matrices())
-    {
+    header.matrixCount = 0;
+
+    for (auto m : f.matrices()) {
         addMatrix(new MSDIFMatrix(*m));
     }
+
+    setTime(f.time());
 }
 
 mFileError MSDIFFrame::fromFile(std::ifstream& file)
@@ -107,7 +110,7 @@ mFileError MSDIFFrame::fromFile(std::ifstream& file)
         return meOK;
 
     // todo: replace?
-    if (header.matrixCount>1024)
+    if (header.matrixCount > 1024)
         header.matrixCount = 1024;
 
     for (int i = 0; i < header.matrixCount; i++) {
@@ -183,9 +186,8 @@ MSDIFMatrixVector MSDIFFrame::matricesWithSignature(std::string signature)
 void MSDIFFrame::calculateFrameSize()
 {
     header.frameSize = 16;
-    for (auto m : _matrices)
-    {
-        header.frameSize+= m->matrixDataSize();
+    for (auto m : _matrices) {
+        header.frameSize += m->matrixDataSize();
     }
 }
 
@@ -199,20 +201,20 @@ void MSDIFFrame::addMatrix(MSDIFMatrix* m)
 
 void MSDIFFrame::removeMatrixAt(size_t idx)
 {
-    if (idx>=_matrices.size())
+    if (idx >= _matrices.size())
         return;
-    
-    _matrices.erase(_matrices.begin()+idx);
+
+    _matrices.erase(_matrices.begin() + idx);
     header.matrixCount--;
     calculateFrameSize();
 }
 
 void MSDIFFrame::insertMatrix(size_t idx, MSDIFMatrix* fr)
 {
-    if (idx>=_matrices.size())
+    if (idx >= _matrices.size())
         return;
-    
-    _matrices.insert(_matrices.begin()+idx, fr);
+
+    _matrices.insert(_matrices.begin() + idx, fr);
     header.matrixCount++;
     calculateFrameSize();
 }
@@ -224,4 +226,23 @@ void MSDIFFrame::removeAllMatrices()
     header.frameSize = 16;
 }
 
+void MSDIFFrame::mergeWithFrame(MSDIFFrame* frame2)
+{
+    int mc = matrixCount();
+    if (frame2->matrixCount() < mc)
+        mc = frame2->matrixCount();
 
+    for (int i = 0; i < mc; i++) {
+        MSDIFMatrix* m = matrices()[i];
+        MSDIFMatrix* m2 = frame2->matrices()[i];
+
+        int m_rows = m->rows();
+        int m_cols = m->columns();
+
+        m->resizeRows(m->rows() + m2->rows());
+
+        for (int i = m_rows; i < m->rows(); i++) {
+            m->setRowValues<float>(i, m2->valuesAtRow<float>(i - m_rows));
+        }
+    }
+}
