@@ -384,8 +384,9 @@ void MSDIFFile::mergeFramesWithSignature(std::string signature, MSDIFFile* file)
 
     size_t shift = _maximumIndexValue(*frames1);
 
-    size_t f_c1 = frames1->size();
-    size_t f_c2 = frames2->size();
+    // ??
+    //size_t f_c1 = frames1->size();
+    //size_t f_c2 = frames2->size();
 
 
 

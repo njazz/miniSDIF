@@ -237,7 +237,8 @@ void MSDIFFrame::mergeWithFrame(MSDIFFrame* frame2)
         MSDIFMatrix* m2 = frame2->matrices()[i];
 
         int m_rows = m->rows();
-        int m_cols = m->columns();
+        // todo:
+        // int m_cols = m->columns();
 
         m->resizeRows(m->rows() + m2->rows());
 
