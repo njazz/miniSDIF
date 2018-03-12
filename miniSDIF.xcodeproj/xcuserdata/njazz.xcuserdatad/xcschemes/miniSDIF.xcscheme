@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3109E2112024A1D7003895DD"
-               BuildableName = "miniSDIF.framework"
-               BlueprintName = "miniSDIF"
+               BuildableName = "miniSDIF_OSX.framework"
+               BlueprintName = "miniSDIF-OSX"
                ReferencedContainer = "container:miniSDIF.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3109E2112024A1D7003895DD"
-            BuildableName = "miniSDIF.framework"
-            BlueprintName = "miniSDIF"
+            BuildableName = "miniSDIF_OSX.framework"
+            BlueprintName = "miniSDIF-OSX"
             ReferencedContainer = "container:miniSDIF.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -68,8 +68,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3109E2112024A1D7003895DD"
-            BuildableName = "miniSDIF.framework"
-            BlueprintName = "miniSDIF"
+            BuildableName = "miniSDIF_OSX.framework"
+            BlueprintName = "miniSDIF-OSX"
             ReferencedContainer = "container:miniSDIF.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -86,8 +86,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3109E2112024A1D7003895DD"
-            BuildableName = "miniSDIF.framework"
-            BlueprintName = "miniSDIF"
+            BuildableName = "miniSDIF_OSX.framework"
+            BlueprintName = "miniSDIF-OSX"
             ReferencedContainer = "container:miniSDIF.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
