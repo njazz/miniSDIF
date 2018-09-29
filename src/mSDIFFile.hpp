@@ -119,9 +119,9 @@ public:
     template <typename T>
     void createFrameWithMatix(std::string signature, int streamID, float time, T data, int rows)
     {
-        MSDIFMatrix* m = new MSDIFMatrix(signature, rows);
-        m->setValues<T>(data);
-        MSDIFFrame f = new MSDIFFrame(signature, streamID);
+        MSDIFMatrix m(signature, rows);
+        m.setValues<T>(data);
+        MSDIFFrame f(signature, streamID);
         f.setTime(time);
         f.addMatrix(m);
         addFrame(f);
@@ -131,8 +131,8 @@ public:
     void insertFrameWithMatix(size_t idx, std::string signature, int streamID, float time, T data, int rows)
     {
         //int rows =  sizeof(data);
-        MSDIFMatrix* m = new MSDIFMatrix(signature, rows);
-        m->setValues<T>(data);
+        MSDIFMatrix m(signature, rows);
+        m.setValues<T>(data);
         MSDIFFrame f(signature, streamID);
         f.setTime(time);
         f.addMatrix(m);

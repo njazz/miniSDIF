@@ -2,11 +2,11 @@
 //  mSDIFMatrix.hpp
 
 /* Copyright 2018 Alex Nadzharov
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
@@ -57,7 +57,7 @@ class MSDIFMatrix {
 
     MSDIFMatrixHeader _header;
 
-    MSDIFMatrix();
+//    MSDIFMatrix();
 
     ///> @brief resize data storage and keep data
     ///> @details this is called when number of columns needs to be changed
@@ -69,7 +69,7 @@ class MSDIFMatrix {
 
 public:
     ///> @brief if the matrix type is not found, creates with supplied parameters otherwise uses only 'rows' value
-    MSDIFMatrix(std::string signature, uint32_t rows = 1, uint32_t columns = 1, uint32_t type = mTChar);
+    MSDIFMatrix(std::string signature = "1TRC", uint32_t rows = 1, uint32_t columns = 1, uint32_t type = mTChar);
     MSDIFMatrix(const MSDIFMatrix& m);
     ~MSDIFMatrix();
 
@@ -108,7 +108,13 @@ public:
     template <typename T>
     const T* data()
     {
-        return _data;
+        return (T*)_data;
+    }
+
+    template <typename T>
+    const std::vector<T> dataVec()
+    {
+        return std::vector<T>(*((T*)_data));
     }
 
     template <typename T>

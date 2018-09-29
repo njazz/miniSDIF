@@ -43,7 +43,7 @@ struct MSDIFFrameHeader : public MSDIFFrameHeaderStruct {
     void setSignature(std::string s);
 };
 
-typedef std::vector<MSDIFMatrix*> MSDIFMatrixVector;
+typedef std::vector<MSDIFMatrix> MSDIFMatrixVector;
 
 ///> \brief MSDIFFrame : class that represents SDIF frame
 class MSDIFFrame {
@@ -88,9 +88,9 @@ public:
     const MSDIFMatrixVector& matrices() const { return _matrices; }; // todo
     MSDIFMatrixVector matricesWithSignature(std::string signature);
 
-    void addMatrix(MSDIFMatrix* m);
+    void addMatrix(MSDIFMatrix& m);
     void removeMatrixAt(size_t idx);
-    void insertMatrix(size_t idx, MSDIFMatrix* fr);
+    void insertMatrix(size_t idx, MSDIFMatrix& fr);
     void removeAllMatrices();
 
     std::string info();
@@ -113,8 +113,8 @@ public:
     float gain() {return _gain;}
     void applyGain()
     {
-          for (auto m : _matrices)
-              m->applyGain(_gain);
+          for (auto& m : _matrices)
+              m.applyGain(_gain);
           _gain = 1;
     }
 

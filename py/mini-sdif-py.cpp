@@ -98,6 +98,42 @@ int _wrap_convert_py2c__std__vector__lt___std__string___gt__(PyObject *arg, std:
 
 typedef struct {
     PyObject_HEAD
+    std::vector<float> *obj;
+} Pystd__vector__lt__float__gt__;
+
+
+typedef struct {
+    PyObject_HEAD
+    Pystd__vector__lt__float__gt__ *container;
+    std::vector<float>::iterator *iterator;
+} Pystd__vector__lt__float__gt__Iter;
+
+
+extern PyTypeObject Pystd__vector__lt__float__gt___Type;
+extern PyTypeObject Pystd__vector__lt__float__gt__Iter_Type;
+
+int _wrap_convert_py2c__std__vector__lt___float___gt__(PyObject *arg, std::vector<float> *container);
+
+typedef struct {
+    PyObject_HEAD
+    std::vector<MSDIFMatrix> *obj;
+} Pystd__vector__lt__MSDIFMatrix__gt__;
+
+
+typedef struct {
+    PyObject_HEAD
+    Pystd__vector__lt__MSDIFMatrix__gt__ *container;
+    std::vector<MSDIFMatrix>::iterator *iterator;
+} Pystd__vector__lt__MSDIFMatrix__gt__Iter;
+
+
+extern PyTypeObject Pystd__vector__lt__MSDIFMatrix__gt___Type;
+extern PyTypeObject Pystd__vector__lt__MSDIFMatrix__gt__Iter_Type;
+
+int _wrap_convert_py2c__std__vector__lt___MSDIFMatrix___gt__(PyObject *arg, std::vector<MSDIFMatrix> *container);
+
+typedef struct {
+    PyObject_HEAD
     std::vector<MSDIFFrame> *obj;
 } Pystd__vector__lt__MSDIFFrame__gt__;
 
@@ -115,6 +151,12 @@ extern PyTypeObject Pystd__vector__lt__MSDIFFrame__gt__Iter_Type;
 int _wrap_convert_py2c__std__vector__lt___MSDIFFrame___gt__(PyObject *arg, std::vector<MSDIFFrame> *container);
 
 int _wrap_convert_py2c__std__string(PyObject *value, std::string *address);
+
+
+int _wrap_convert_py2c__float(PyObject *value, float *address);
+
+
+int _wrap_convert_py2c__MSDIFMatrix(PyObject *value, MSDIFMatrix *address);
 
 
 int _wrap_convert_py2c__MSDIFFrame(PyObject *value, MSDIFFrame *address);
@@ -347,11 +389,31 @@ _wrap_PyMSDIFMatrix__tp_init__1(PyMSDIFMatrix *self, PyObject *args, PyObject *k
     return 0;
 }
 
+static int
+_wrap_PyMSDIFMatrix__tp_init__2(PyMSDIFMatrix *self, PyObject *args, PyObject *kwargs, PyObject **return_exception)
+{
+    PyMSDIFMatrix *ctor_arg;
+    const char *keywords[] = {"ctor_arg", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "O!", (char **) keywords, &PyMSDIFMatrix_Type, &ctor_arg)) {
+        {
+            PyObject *exc_type, *traceback;
+            PyErr_Fetch(&exc_type, return_exception, &traceback);
+            Py_XDECREF(exc_type);
+            Py_XDECREF(traceback);
+        }
+        return -1;
+    }
+    self->obj = new MSDIFMatrix(*((PyMSDIFMatrix *) ctor_arg)->obj);
+    self->flags = PYBINDGEN_WRAPPER_FLAG_NONE;
+    return 0;
+}
+
 int _wrap_PyMSDIFMatrix__tp_init(PyMSDIFMatrix *self, PyObject *args, PyObject *kwargs)
 {
     int retval;
     PyObject *error_list;
-    PyObject *exceptions[2] = {0,};
+    PyObject *exceptions[3] = {0,};
     retval = _wrap_PyMSDIFMatrix__tp_init__0(self, args, kwargs, &exceptions[0]);
     if (!exceptions[0]) {
         return retval;
@@ -361,11 +423,19 @@ int _wrap_PyMSDIFMatrix__tp_init(PyMSDIFMatrix *self, PyObject *args, PyObject *
         Py_DECREF(exceptions[0]);
         return retval;
     }
-    error_list = PyList_New(2);
+    retval = _wrap_PyMSDIFMatrix__tp_init__2(self, args, kwargs, &exceptions[2]);
+    if (!exceptions[2]) {
+        Py_DECREF(exceptions[0]);
+        Py_DECREF(exceptions[1]);
+        return retval;
+    }
+    error_list = PyList_New(3);
     PyList_SET_ITEM(error_list, 0, PyObject_Str(exceptions[0]));
     Py_DECREF(exceptions[0]);
     PyList_SET_ITEM(error_list, 1, PyObject_Str(exceptions[1]));
     Py_DECREF(exceptions[1]);
+    PyList_SET_ITEM(error_list, 2, PyObject_Str(exceptions[2]));
+    Py_DECREF(exceptions[2]);
     PyErr_SetObject(PyExc_TypeError, error_list);
     Py_DECREF(error_list);
     return -1;
@@ -542,6 +612,33 @@ _wrap_PyMSDIFMatrix_shiftIndices(PyMSDIFMatrix *self, PyObject *args, PyObject *
     return py_retval;
 }
 
+
+PyObject *
+_wrap_PyMSDIFMatrix_dataVec(PyMSDIFMatrix *self)
+{
+    PyObject *py_retval;
+    std::vector< float > retval;
+    Pystd__vector__lt__float__gt__ *py_std__vector__lt__float__gt__;
+
+    retval = self->obj->dataVec<float>();
+    py_std__vector__lt__float__gt__ = PyObject_New(Pystd__vector__lt__float__gt__, &Pystd__vector__lt__float__gt___Type);
+    py_std__vector__lt__float__gt__->obj = new std::vector<float>(retval);
+    py_retval = Py_BuildValue((char *) "N", py_std__vector__lt__float__gt__);
+    return py_retval;
+}
+
+
+static PyObject*
+_wrap_PyMSDIFMatrix__copy__(PyMSDIFMatrix *self)
+{
+
+    PyMSDIFMatrix *py_copy;
+    py_copy = PyObject_New(PyMSDIFMatrix, &PyMSDIFMatrix_Type);
+    py_copy->obj = new MSDIFMatrix(*self->obj);
+    py_copy->flags = PYBINDGEN_WRAPPER_FLAG_NONE;
+    return (PyObject*) py_copy;
+}
+
 static PyMethodDef PyMSDIFMatrix_methods[] = {
     {(char *) "rows", (PyCFunction) _wrap_PyMSDIFMatrix_rows, METH_NOARGS, "rows()\n\n" },
     {(char *) "columns", (PyCFunction) _wrap_PyMSDIFMatrix_columns, METH_NOARGS, "columns()\n\n" },
@@ -555,6 +652,8 @@ static PyMethodDef PyMSDIFMatrix_methods[] = {
     {(char *) "applyGain", (PyCFunction) _wrap_PyMSDIFMatrix_applyGain, METH_VARARGS|METH_KEYWORDS, "applyGain(g)\n\ntype: g: float" },
     {(char *) "maximumIndexValue", (PyCFunction) _wrap_PyMSDIFMatrix_maximumIndexValue, METH_NOARGS, "maximumIndexValue()\n\n" },
     {(char *) "shiftIndices", (PyCFunction) _wrap_PyMSDIFMatrix_shiftIndices, METH_VARARGS|METH_KEYWORDS, "shiftIndices(idx)\n\ntype: idx: size_t" },
+    {(char *) "dataVec", (PyCFunction) _wrap_PyMSDIFMatrix_dataVec, METH_NOARGS, "dataVec()\n\n" },
+    {(char *) "__copy__", (PyCFunction) _wrap_PyMSDIFMatrix__copy__, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL}
 };
 
@@ -628,7 +727,7 @@ PyTypeObject PyMSDIFMatrix_Type = {
     (setattrofunc)NULL,     /* tp_setattro */
     (PyBufferProcs*)NULL,  /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,                      /* tp_flags */
-    "SDIFMatrix(signature, rows, columns, type)\nSDIFMatrix(signature)",                        /* Documentation string */
+    "SDIFMatrix(signature, rows, columns, type)\nSDIFMatrix(signature)\nSDIFMatrix(ctor_arg)",                        /* Documentation string */
     (traverseproc)NULL,     /* tp_traverse */
     (inquiry)NULL,             /* tp_clear */
     (richcmpfunc)_wrap_PyMSDIFMatrix__tp_richcompare,   /* tp_richcompare */
@@ -821,6 +920,21 @@ _wrap_PyMSDIFFrame_matrixCount(PyMSDIFFrame *self)
 }
 
 
+PyObject *
+_wrap_PyMSDIFFrame_matrices(PyMSDIFFrame *self)
+{
+    PyObject *py_retval;
+    std::vector< MSDIFMatrix > retval;
+    Pystd__vector__lt__MSDIFMatrix__gt__ *py_std__vector__lt__MSDIFMatrix__gt__;
+
+    retval = self->obj->matrices();
+    py_std__vector__lt__MSDIFMatrix__gt__ = PyObject_New(Pystd__vector__lt__MSDIFMatrix__gt__, &Pystd__vector__lt__MSDIFMatrix__gt___Type);
+    py_std__vector__lt__MSDIFMatrix__gt__->obj = new std::vector<MSDIFMatrix>(retval);
+    py_retval = Py_BuildValue((char *) "N", py_std__vector__lt__MSDIFMatrix__gt__);
+    return py_retval;
+}
+
+
 static PyObject*
 _wrap_PyMSDIFFrame__copy__(PyMSDIFFrame *self)
 {
@@ -840,6 +954,7 @@ static PyMethodDef PyMSDIFFrame_methods[] = {
     {(char *) "streamID", (PyCFunction) _wrap_PyMSDIFFrame_streamID, METH_NOARGS, "streamID()\n\n" },
     {(char *) "setStreamID", (PyCFunction) _wrap_PyMSDIFFrame_setStreamID, METH_VARARGS|METH_KEYWORDS, "setStreamID(s)\n\ntype: s: int32_t" },
     {(char *) "matrixCount", (PyCFunction) _wrap_PyMSDIFFrame_matrixCount, METH_NOARGS, "matrixCount()\n\n" },
+    {(char *) "matrices", (PyCFunction) _wrap_PyMSDIFFrame_matrices, METH_NOARGS, "matrices()\n\n" },
     {(char *) "__copy__", (PyCFunction) _wrap_PyMSDIFFrame__copy__, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL}
 };
@@ -1365,6 +1480,496 @@ PyTypeObject Pystd__vector__lt__std__string__gt__Iter_Type = {
 
 
 static void
+Pystd__vector__lt__float__gt__Iter__tp_clear(Pystd__vector__lt__float__gt__Iter *self)
+{
+    Py_CLEAR(self->container);
+    delete self->iterator;
+    self->iterator = NULL;
+
+}
+
+
+static int
+Pystd__vector__lt__float__gt__Iter__tp_traverse(Pystd__vector__lt__float__gt__Iter *self, visitproc visit, void *arg)
+{
+    Py_VISIT((PyObject *) self->container);
+    return 0;
+}
+
+
+static void
+_wrap_Pystd__vector__lt__float__gt____tp_dealloc(Pystd__vector__lt__float__gt__ *self)
+{
+    delete self->obj;
+    self->obj = NULL;
+
+    Py_TYPE(self)->tp_free((PyObject*)self);
+}
+
+
+static void
+_wrap_Pystd__vector__lt__float__gt__Iter__tp_dealloc(Pystd__vector__lt__float__gt__Iter *self)
+{
+    Py_CLEAR(self->container);
+    delete self->iterator;
+    self->iterator = NULL;
+
+    Py_TYPE(self)->tp_free((PyObject*)self);
+}
+
+
+static PyObject*
+_wrap_Pystd__vector__lt__float__gt____tp_iter(Pystd__vector__lt__float__gt__ *self)
+{
+    Pystd__vector__lt__float__gt__Iter *iter = PyObject_GC_New(Pystd__vector__lt__float__gt__Iter, &Pystd__vector__lt__float__gt__Iter_Type);
+    Py_INCREF(self);
+    iter->container = self;
+    iter->iterator = new std::vector<float>::iterator(self->obj->begin());
+    return (PyObject*) iter;
+}
+
+
+static PyObject*
+_wrap_Pystd__vector__lt__float__gt__Iter__tp_iter(Pystd__vector__lt__float__gt__Iter *self)
+{
+    Py_INCREF(self);
+    return (PyObject*) self;
+}
+
+static PyObject* _wrap_Pystd__vector__lt__float__gt__Iter__tp_iternext(Pystd__vector__lt__float__gt__Iter *self)
+{
+    PyObject *py_retval;
+    std::vector<float>::iterator iter;
+
+    iter = *self->iterator;
+    if (iter == self->container->obj->end()) {
+        PyErr_SetNone(PyExc_StopIteration);
+        return NULL;
+    }
+    ++(*self->iterator);
+    py_retval = Py_BuildValue((char *) "f", (*iter));
+    return py_retval;
+}
+
+int _wrap_convert_py2c__float(PyObject *value, float *address)
+{
+    PyObject *py_retval;
+
+    py_retval = Py_BuildValue((char *) "(O)", value);
+    if (!PyArg_ParseTuple(py_retval, (char *) "f", &*address)) {
+        Py_DECREF(py_retval);
+        return 0;
+    }
+    Py_DECREF(py_retval);
+    return 1;
+}
+
+
+int _wrap_convert_py2c__std__vector__lt___float___gt__(PyObject *arg, std::vector<float> *container)
+{
+    if (PyObject_IsInstance(arg, (PyObject*) &Pystd__vector__lt__float__gt___Type)) {
+        *container = *((Pystd__vector__lt__float__gt__*)arg)->obj;
+    } else if (PyList_Check(arg)) {
+        container->clear();
+        Py_ssize_t size = PyList_Size(arg);
+        for (Py_ssize_t i = 0; i < size; i++) {
+            float item;
+            if (!_wrap_convert_py2c__float(PyList_GET_ITEM(arg, i), &item)) {
+                return 0;
+            }
+            container->push_back(item);
+        }
+    } else {
+        PyErr_SetString(PyExc_TypeError, "parameter must be None, a FVec instance, or a list of float");
+        return 0;
+    }
+    return 1;
+}
+
+
+static int
+_wrap_Pystd__vector__lt__float__gt____tp_init(Pystd__vector__lt__float__gt__ *self, PyObject *args, PyObject *kwargs)
+{
+    const char *keywords[] = {"arg", NULL};
+    PyObject *arg = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "|O", (char **) keywords, &arg)) {
+        return -1;
+    }
+
+    self->obj = new std::vector<float>;
+
+    if (arg == NULL)
+        return 0;
+
+    if (!_wrap_convert_py2c__std__vector__lt___float___gt__(arg, self->obj)) {
+        delete self->obj;
+        self->obj = NULL;
+        return -1;
+    }
+    return 0;
+}
+
+PyTypeObject Pystd__vector__lt__float__gt___Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    (char *) "minisdifpy.FVec",            /* tp_name */
+    sizeof(Pystd__vector__lt__float__gt__),                  /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)_wrap_Pystd__vector__lt__float__gt____tp_dealloc,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)NULL,       /* tp_getattr */
+    (setattrfunc)NULL,       /* tp_setattr */
+#if PY_MAJOR_VERSION >= 3
+    NULL,
+#else
+    (cmpfunc)NULL,           /* tp_compare */
+#endif
+    (reprfunc)NULL,             /* tp_repr */
+    (PyNumberMethods*)NULL,     /* tp_as_number */
+    (PySequenceMethods*)NULL, /* tp_as_sequence */
+    (PyMappingMethods*)NULL,   /* tp_as_mapping */
+    (hashfunc)NULL,             /* tp_hash */
+    (ternaryfunc)NULL,          /* tp_call */
+    (reprfunc)NULL,              /* tp_str */
+    (getattrofunc)NULL,     /* tp_getattro */
+    (setattrofunc)NULL,     /* tp_setattro */
+    (PyBufferProcs*)NULL,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)NULL,     /* tp_traverse */
+    (inquiry)NULL,             /* tp_clear */
+    (richcmpfunc)NULL,   /* tp_richcompare */
+    0,             /* tp_weaklistoffset */
+    (getiterfunc)_wrap_Pystd__vector__lt__float__gt____tp_iter,          /* tp_iter */
+    (iternextfunc)NULL,     /* tp_iternext */
+    (struct PyMethodDef*)NULL, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    NULL,                     /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)NULL,    /* tp_descr_get */
+    (descrsetfunc)NULL,    /* tp_descr_set */
+    0,                 /* tp_dictoffset */
+    (initproc)_wrap_Pystd__vector__lt__float__gt____tp_init,             /* tp_init */
+    (allocfunc)PyType_GenericAlloc,           /* tp_alloc */
+    (newfunc)PyType_GenericNew,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)NULL,             /* tp_is_gc */
+    NULL,                              /* tp_bases */
+    NULL,                              /* tp_mro */
+    NULL,                              /* tp_cache */
+    NULL,                              /* tp_subclasses */
+    NULL,                              /* tp_weaklist */
+    (destructor) NULL                  /* tp_del */
+};
+
+PyTypeObject Pystd__vector__lt__float__gt__Iter_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    (char *) "minisdifpy.FVecIter",            /* tp_name */
+    sizeof(Pystd__vector__lt__float__gt__Iter),                  /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)_wrap_Pystd__vector__lt__float__gt__Iter__tp_dealloc,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)NULL,       /* tp_getattr */
+    (setattrfunc)NULL,       /* tp_setattr */
+#if PY_MAJOR_VERSION >= 3
+    NULL,
+#else
+    (cmpfunc)NULL,           /* tp_compare */
+#endif
+    (reprfunc)NULL,             /* tp_repr */
+    (PyNumberMethods*)NULL,     /* tp_as_number */
+    (PySequenceMethods*)NULL, /* tp_as_sequence */
+    (PyMappingMethods*)NULL,   /* tp_as_mapping */
+    (hashfunc)NULL,             /* tp_hash */
+    (ternaryfunc)NULL,          /* tp_call */
+    (reprfunc)NULL,              /* tp_str */
+    (getattrofunc)NULL,     /* tp_getattro */
+    (setattrofunc)NULL,     /* tp_setattro */
+    (PyBufferProcs*)NULL,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_GC,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)Pystd__vector__lt__float__gt__Iter__tp_traverse,     /* tp_traverse */
+    (inquiry)Pystd__vector__lt__float__gt__Iter__tp_clear,             /* tp_clear */
+    (richcmpfunc)NULL,   /* tp_richcompare */
+    0,             /* tp_weaklistoffset */
+    (getiterfunc)_wrap_Pystd__vector__lt__float__gt__Iter__tp_iter,          /* tp_iter */
+    (iternextfunc)_wrap_Pystd__vector__lt__float__gt__Iter__tp_iternext,     /* tp_iternext */
+    (struct PyMethodDef*)NULL, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    NULL,                     /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)NULL,    /* tp_descr_get */
+    (descrsetfunc)NULL,    /* tp_descr_set */
+    0,                 /* tp_dictoffset */
+    (initproc)NULL,             /* tp_init */
+    (allocfunc)PyType_GenericAlloc,           /* tp_alloc */
+    (newfunc)PyType_GenericNew,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)NULL,             /* tp_is_gc */
+    NULL,                              /* tp_bases */
+    NULL,                              /* tp_mro */
+    NULL,                              /* tp_cache */
+    NULL,                              /* tp_subclasses */
+    NULL,                              /* tp_weaklist */
+    (destructor) NULL                  /* tp_del */
+};
+
+
+
+
+static void
+Pystd__vector__lt__MSDIFMatrix__gt__Iter__tp_clear(Pystd__vector__lt__MSDIFMatrix__gt__Iter *self)
+{
+    Py_CLEAR(self->container);
+    delete self->iterator;
+    self->iterator = NULL;
+
+}
+
+
+static int
+Pystd__vector__lt__MSDIFMatrix__gt__Iter__tp_traverse(Pystd__vector__lt__MSDIFMatrix__gt__Iter *self, visitproc visit, void *arg)
+{
+    Py_VISIT((PyObject *) self->container);
+    return 0;
+}
+
+
+static void
+_wrap_Pystd__vector__lt__MSDIFMatrix__gt____tp_dealloc(Pystd__vector__lt__MSDIFMatrix__gt__ *self)
+{
+    delete self->obj;
+    self->obj = NULL;
+
+    Py_TYPE(self)->tp_free((PyObject*)self);
+}
+
+
+static void
+_wrap_Pystd__vector__lt__MSDIFMatrix__gt__Iter__tp_dealloc(Pystd__vector__lt__MSDIFMatrix__gt__Iter *self)
+{
+    Py_CLEAR(self->container);
+    delete self->iterator;
+    self->iterator = NULL;
+
+    Py_TYPE(self)->tp_free((PyObject*)self);
+}
+
+
+static PyObject*
+_wrap_Pystd__vector__lt__MSDIFMatrix__gt____tp_iter(Pystd__vector__lt__MSDIFMatrix__gt__ *self)
+{
+    Pystd__vector__lt__MSDIFMatrix__gt__Iter *iter = PyObject_GC_New(Pystd__vector__lt__MSDIFMatrix__gt__Iter, &Pystd__vector__lt__MSDIFMatrix__gt__Iter_Type);
+    Py_INCREF(self);
+    iter->container = self;
+    iter->iterator = new std::vector<MSDIFMatrix>::iterator(self->obj->begin());
+    return (PyObject*) iter;
+}
+
+
+static PyObject*
+_wrap_Pystd__vector__lt__MSDIFMatrix__gt__Iter__tp_iter(Pystd__vector__lt__MSDIFMatrix__gt__Iter *self)
+{
+    Py_INCREF(self);
+    return (PyObject*) self;
+}
+
+static PyObject* _wrap_Pystd__vector__lt__MSDIFMatrix__gt__Iter__tp_iternext(Pystd__vector__lt__MSDIFMatrix__gt__Iter *self)
+{
+    PyObject *py_retval;
+    std::vector<MSDIFMatrix>::iterator iter;
+    PyMSDIFMatrix *py_MSDIFMatrix;
+
+    iter = *self->iterator;
+    if (iter == self->container->obj->end()) {
+        PyErr_SetNone(PyExc_StopIteration);
+        return NULL;
+    }
+    ++(*self->iterator);
+    py_MSDIFMatrix = PyObject_New(PyMSDIFMatrix, &PyMSDIFMatrix_Type);
+    py_MSDIFMatrix->flags = PYBINDGEN_WRAPPER_FLAG_NONE;
+    py_MSDIFMatrix->obj = new MSDIFMatrix((*iter));
+    py_retval = Py_BuildValue((char *) "N", py_MSDIFMatrix);
+    return py_retval;
+}
+
+int _wrap_convert_py2c__MSDIFMatrix(PyObject *value, MSDIFMatrix *address)
+{
+    PyObject *py_retval;
+    PyMSDIFMatrix *tmp_MSDIFMatrix;
+
+    py_retval = Py_BuildValue((char *) "(O)", value);
+    if (!PyArg_ParseTuple(py_retval, (char *) "O!", &PyMSDIFMatrix_Type, &tmp_MSDIFMatrix)) {
+        Py_DECREF(py_retval);
+        return 0;
+    }
+    *address = *tmp_MSDIFMatrix->obj;
+    Py_DECREF(py_retval);
+    return 1;
+}
+
+
+int _wrap_convert_py2c__std__vector__lt___MSDIFMatrix___gt__(PyObject *arg, std::vector<MSDIFMatrix> *container)
+{
+    if (PyObject_IsInstance(arg, (PyObject*) &Pystd__vector__lt__MSDIFMatrix__gt___Type)) {
+        *container = *((Pystd__vector__lt__MSDIFMatrix__gt__*)arg)->obj;
+    } else if (PyList_Check(arg)) {
+        container->clear();
+        Py_ssize_t size = PyList_Size(arg);
+        for (Py_ssize_t i = 0; i < size; i++) {
+            MSDIFMatrix item;
+            if (!_wrap_convert_py2c__MSDIFMatrix(PyList_GET_ITEM(arg, i), &item)) {
+                return 0;
+            }
+            container->push_back(item);
+        }
+    } else {
+        PyErr_SetString(PyExc_TypeError, "parameter must be None, a SDIFMatrixVec instance, or a list of MSDIFMatrix");
+        return 0;
+    }
+    return 1;
+}
+
+
+static int
+_wrap_Pystd__vector__lt__MSDIFMatrix__gt____tp_init(Pystd__vector__lt__MSDIFMatrix__gt__ *self, PyObject *args, PyObject *kwargs)
+{
+    const char *keywords[] = {"arg", NULL};
+    PyObject *arg = NULL;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "|O", (char **) keywords, &arg)) {
+        return -1;
+    }
+
+    self->obj = new std::vector<MSDIFMatrix>;
+
+    if (arg == NULL)
+        return 0;
+
+    if (!_wrap_convert_py2c__std__vector__lt___MSDIFMatrix___gt__(arg, self->obj)) {
+        delete self->obj;
+        self->obj = NULL;
+        return -1;
+    }
+    return 0;
+}
+
+PyTypeObject Pystd__vector__lt__MSDIFMatrix__gt___Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    (char *) "minisdifpy.SDIFMatrixVec",            /* tp_name */
+    sizeof(Pystd__vector__lt__MSDIFMatrix__gt__),                  /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)_wrap_Pystd__vector__lt__MSDIFMatrix__gt____tp_dealloc,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)NULL,       /* tp_getattr */
+    (setattrfunc)NULL,       /* tp_setattr */
+#if PY_MAJOR_VERSION >= 3
+    NULL,
+#else
+    (cmpfunc)NULL,           /* tp_compare */
+#endif
+    (reprfunc)NULL,             /* tp_repr */
+    (PyNumberMethods*)NULL,     /* tp_as_number */
+    (PySequenceMethods*)NULL, /* tp_as_sequence */
+    (PyMappingMethods*)NULL,   /* tp_as_mapping */
+    (hashfunc)NULL,             /* tp_hash */
+    (ternaryfunc)NULL,          /* tp_call */
+    (reprfunc)NULL,              /* tp_str */
+    (getattrofunc)NULL,     /* tp_getattro */
+    (setattrofunc)NULL,     /* tp_setattro */
+    (PyBufferProcs*)NULL,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)NULL,     /* tp_traverse */
+    (inquiry)NULL,             /* tp_clear */
+    (richcmpfunc)NULL,   /* tp_richcompare */
+    0,             /* tp_weaklistoffset */
+    (getiterfunc)_wrap_Pystd__vector__lt__MSDIFMatrix__gt____tp_iter,          /* tp_iter */
+    (iternextfunc)NULL,     /* tp_iternext */
+    (struct PyMethodDef*)NULL, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    NULL,                     /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)NULL,    /* tp_descr_get */
+    (descrsetfunc)NULL,    /* tp_descr_set */
+    0,                 /* tp_dictoffset */
+    (initproc)_wrap_Pystd__vector__lt__MSDIFMatrix__gt____tp_init,             /* tp_init */
+    (allocfunc)PyType_GenericAlloc,           /* tp_alloc */
+    (newfunc)PyType_GenericNew,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)NULL,             /* tp_is_gc */
+    NULL,                              /* tp_bases */
+    NULL,                              /* tp_mro */
+    NULL,                              /* tp_cache */
+    NULL,                              /* tp_subclasses */
+    NULL,                              /* tp_weaklist */
+    (destructor) NULL                  /* tp_del */
+};
+
+PyTypeObject Pystd__vector__lt__MSDIFMatrix__gt__Iter_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    (char *) "minisdifpy.SDIFMatrixVecIter",            /* tp_name */
+    sizeof(Pystd__vector__lt__MSDIFMatrix__gt__Iter),                  /* tp_basicsize */
+    0,                                 /* tp_itemsize */
+    /* methods */
+    (destructor)_wrap_Pystd__vector__lt__MSDIFMatrix__gt__Iter__tp_dealloc,        /* tp_dealloc */
+    (printfunc)0,                      /* tp_print */
+    (getattrfunc)NULL,       /* tp_getattr */
+    (setattrfunc)NULL,       /* tp_setattr */
+#if PY_MAJOR_VERSION >= 3
+    NULL,
+#else
+    (cmpfunc)NULL,           /* tp_compare */
+#endif
+    (reprfunc)NULL,             /* tp_repr */
+    (PyNumberMethods*)NULL,     /* tp_as_number */
+    (PySequenceMethods*)NULL, /* tp_as_sequence */
+    (PyMappingMethods*)NULL,   /* tp_as_mapping */
+    (hashfunc)NULL,             /* tp_hash */
+    (ternaryfunc)NULL,          /* tp_call */
+    (reprfunc)NULL,              /* tp_str */
+    (getattrofunc)NULL,     /* tp_getattro */
+    (setattrofunc)NULL,     /* tp_setattro */
+    (PyBufferProcs*)NULL,  /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_GC,                      /* tp_flags */
+    NULL,                        /* Documentation string */
+    (traverseproc)Pystd__vector__lt__MSDIFMatrix__gt__Iter__tp_traverse,     /* tp_traverse */
+    (inquiry)Pystd__vector__lt__MSDIFMatrix__gt__Iter__tp_clear,             /* tp_clear */
+    (richcmpfunc)NULL,   /* tp_richcompare */
+    0,             /* tp_weaklistoffset */
+    (getiterfunc)_wrap_Pystd__vector__lt__MSDIFMatrix__gt__Iter__tp_iter,          /* tp_iter */
+    (iternextfunc)_wrap_Pystd__vector__lt__MSDIFMatrix__gt__Iter__tp_iternext,     /* tp_iternext */
+    (struct PyMethodDef*)NULL, /* tp_methods */
+    (struct PyMemberDef*)0,              /* tp_members */
+    NULL,                     /* tp_getset */
+    NULL,                              /* tp_base */
+    NULL,                              /* tp_dict */
+    (descrgetfunc)NULL,    /* tp_descr_get */
+    (descrsetfunc)NULL,    /* tp_descr_set */
+    0,                 /* tp_dictoffset */
+    (initproc)NULL,             /* tp_init */
+    (allocfunc)PyType_GenericAlloc,           /* tp_alloc */
+    (newfunc)PyType_GenericNew,               /* tp_new */
+    (freefunc)0,             /* tp_free */
+    (inquiry)NULL,             /* tp_is_gc */
+    NULL,                              /* tp_bases */
+    NULL,                              /* tp_mro */
+    NULL,                              /* tp_cache */
+    NULL,                              /* tp_subclasses */
+    NULL,                              /* tp_weaklist */
+    (destructor) NULL                  /* tp_del */
+};
+
+
+
+
+static void
 Pystd__vector__lt__MSDIFFrame__gt__Iter__tp_clear(Pystd__vector__lt__MSDIFFrame__gt__Iter *self)
 {
     Py_CLEAR(self->container);
@@ -1678,6 +2283,24 @@ MOD_INIT(minisdifpy)
     }
     PyModule_AddObject(m, (char *) "Std__vector__lt__std__string__gt__", (PyObject *) &Pystd__vector__lt__std__string__gt___Type);
     PyModule_AddObject(m, (char *) "Std__vector__lt__std__string__gt__Iter", (PyObject *) &Pystd__vector__lt__std__string__gt__Iter_Type);
+    /* Register the 'std::vector<float>' class */
+    if (PyType_Ready(&Pystd__vector__lt__float__gt___Type)) {
+        return MOD_ERROR;
+    }
+    if (PyType_Ready(&Pystd__vector__lt__float__gt__Iter_Type)) {
+        return MOD_ERROR;
+    }
+    PyModule_AddObject(m, (char *) "FVec", (PyObject *) &Pystd__vector__lt__float__gt___Type);
+    PyModule_AddObject(m, (char *) "FVecIter", (PyObject *) &Pystd__vector__lt__float__gt__Iter_Type);
+    /* Register the 'std::vector<MSDIFMatrix>' class */
+    if (PyType_Ready(&Pystd__vector__lt__MSDIFMatrix__gt___Type)) {
+        return MOD_ERROR;
+    }
+    if (PyType_Ready(&Pystd__vector__lt__MSDIFMatrix__gt__Iter_Type)) {
+        return MOD_ERROR;
+    }
+    PyModule_AddObject(m, (char *) "SDIFMatrixVec", (PyObject *) &Pystd__vector__lt__MSDIFMatrix__gt___Type);
+    PyModule_AddObject(m, (char *) "SDIFMatrixVecIter", (PyObject *) &Pystd__vector__lt__MSDIFMatrix__gt__Iter_Type);
     /* Register the 'std::vector<MSDIFFrame>' class */
     if (PyType_Ready(&Pystd__vector__lt__MSDIFFrame__gt___Type)) {
         return MOD_ERROR;

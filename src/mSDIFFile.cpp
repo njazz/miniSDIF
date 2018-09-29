@@ -96,7 +96,8 @@ mFileError MSDIFFile::fromFile(std::ifstream& file)
 
     int c = 0;
     while (!(file.eof())) {
-        printf("reading frame %i\n", c++);
+        // TODO: switch debug
+        //printf("reading frame %i\n", c++);
 
         MSDIFFrame newFrame; // = new MSDIFFrame;
 
@@ -125,7 +126,8 @@ mFileError MSDIFFile::fromFile(std::ifstream& file)
 
 mFileError MSDIFFile::toFile(std::ofstream& file)
 {
-    printf("write file\n");
+    // TODO: switch debug
+    // printf("write file\n");
 
     mFileError err = header.toFile(file);
 
@@ -298,8 +300,8 @@ inline size_t _maximumIndexValue(MSDIFFrameVector vec)
     size_t ret = 0;
     for (auto v : vec) {
         for (auto m : v.matrices()) {
-            if (ret < m->maximumIndexValue())
-                ret = m->maximumIndexValue();
+            if (ret < m.maximumIndexValue())
+                ret = m.maximumIndexValue();
         }
     }
 
@@ -318,7 +320,7 @@ inline size_t _maximumIndexValue(MSDIFFrameVector vec)
 inline void _shiftIndices(MSDIFFrame& f, size_t idx)
 {
     for (auto m : f.matrices()) {
-        m->shiftIndices(idx);
+        m.shiftIndices(idx);
     }
 }
 

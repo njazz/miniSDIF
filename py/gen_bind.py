@@ -39,6 +39,8 @@ msd_matrix.add_constructor([\
 param('std::string','signature'),
 ])
 
+msd_matrix.add_copy_constructor()
+
 msd_matrix.add_method('rows', retval('int'), [], is_const=False)
 msd_matrix.add_method('columns', retval('int'), [], is_const=False)
 
@@ -77,6 +79,22 @@ msd_matrix.add_method('shiftIndices', None, [param('size_t', 'idx')])
 
 # TODO: templates
 
+mod.add_container("std::vector<float>","float","list", custom_name="FVec")
+msd_matrix.add_method('dataVec<float>', ReturnValue.new("std::vector<float>"),[], custom_name="dataVec")
+
+# fc =mod.add_class("float")
+# cf = mod.add_container("std::vector<float>","float","list", custom_name="FVec")
+#
+# msd_matrix.add_method('data<float>', ReturnValue.new("const float*", caller_owns_return=True),[])
+#
+# msd_matrix.add_method('valuesAtRow<float>', ReturnValue.new("const float*", caller_owns_return=True), [\
+# param('size_t', 'idx')\
+# ], custom_name="valuesAtRow")
+#
+# msd_matrix.add_method('valuesAtColumn<float>', ReturnValue.new("const float*", caller_owns_return=True), [\
+# param('size_t', 'idx')\
+# ], custom_name="valuesAtColumn")
+
 ##########
 
 msd_frame = mod.add_class('MSDIFFrame')
@@ -100,11 +118,13 @@ msd_frame.add_method('setStreamID', None, [param('int32_t','s')])
 
 msd_frame.add_method('matrixCount', retval('uint32_t'), [])
 
+# mod.add_container('std::vector<float*>', 'float', 'vector')
+mod.add_container('std::vector<MSDIFMatrix>', 'MSDIFMatrix', 'vector', custom_name="SDIFMatrixVec")
+msd_frame.add_method('matrices',retval('std::vector<MSDIFMatrix>'),[])
 ###
 
 msd_file = mod.add_class("MSDIFFile")
 msd_file.custom_name = "SDIFFile"
-
 
 msd_file.add_constructor([])
 
@@ -113,13 +133,10 @@ msd_file.add_method('writeFile', retval('int'), [param('std::string','filename')
 
 
 # mod.add_typedef(["std::vector<MSDIFFrame*>"],["MSDIFFrameVector" ])
-
-
-
 # msd_file.add_method('frameCount', retval('int'), [])
 
 # mod.add_container('std::vector<float*>', 'float', 'vector')
-mod.add_container('std::vector<MSDIFFrame>', 'MSDIFFrame', 'vector')
+fl =mod.add_container('std::vector<MSDIFFrame>', 'MSDIFFrame', 'vector')
 # mod.add_container('std::vector<MSDIFFrame*>', 'MSDIFFrame', 'vector')
 
 msd_file.add_method('frames', retval('std::vector<MSDIFFrame>'), [])

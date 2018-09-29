@@ -94,7 +94,7 @@ MSDIFFrame::MSDIFFrame(const MSDIFFrame &f)
     header.matrixCount = 0;
 
     for (auto m : f.matrices()) {
-        addMatrix(new MSDIFMatrix(*m));
+        addMatrix(m);
     }
 
     setTime(f.time());
@@ -107,7 +107,7 @@ MSDIFFrame::MSDIFFrame(MSDIFFrame* f)
     header.matrixCount = 0;
 
     for (auto m : f->matrices()) {
-        addMatrix(new MSDIFMatrix(*m));
+        addMatrix(m);
     }
 
     setTime(f->time());
@@ -128,17 +128,18 @@ mFileError MSDIFFrame::fromFile(std::ifstream& file)
 
     for (int i = 0; i < header.matrixCount; i++) {
 
-        MSDIFMatrix* newMatrix = new MSDIFMatrix;
+        MSDIFMatrix newMatrix;
 
-        mFileError err = newMatrix->fromFile(file);
+        mFileError err = newMatrix.fromFile(file);
         if (err != meOK) {
-            delete newMatrix;
+//            delete newMatrix;
             return err;
         }
 
         _matrices.push_back(newMatrix);
 
-        printf("<%i>: %s", i, newMatrix->info().c_str());
+        // TODO: switch debug
+        //printf("<%i>: %s", i, newMatrix->info().c_str());
     }
 
     return meOK;
@@ -146,14 +147,14 @@ mFileError MSDIFFrame::fromFile(std::ifstream& file)
 
 mFileError MSDIFFrame::toFile(std::ofstream& file)
 {
-    printf("write frame\n");
+    //printf("write frame\n");
 
     mFileError err = header.toFile(file);
     if (err != meOK)
         return err;
 
-    for (MSDIFMatrixVector::iterator it = _matrices.begin(); it != _matrices.end(); ++it) {
-        mFileError err = (*it)->toFile(file);
+    for (auto& it: _matrices){//MSDIFMatrixVector::iterator it = _matrices.begin(); it != _matrices.end(); ++it) {
+        mFileError err = it.toFile(file);
         if (err != meOK) {
             return err;
         }
@@ -177,8 +178,8 @@ std::string MSDIFFrame::info()
     ret += " Time: " + std::to_string(header.time);
     ret += "\n";
 
-    for (MSDIFMatrixVector::iterator it = _matrices.begin(); it != _matrices.end(); ++it) {
-        ret += (*it)->info();
+    for (auto& it:_matrices){//MSDIFMatrixVector::iterator it = _matrices.begin(); it != _matrices.end(); ++it) {
+        ret += (it).info();
     }
 
     return ret;
@@ -188,9 +189,9 @@ MSDIFMatrixVector MSDIFFrame::matricesWithSignature(std::string signature)
 {
     MSDIFMatrixVector ret;
 
-    for (MSDIFMatrixVector::iterator it = _matrices.begin(); it != _matrices.end(); ++it) {
-        if (!strncmp((*it)->_header.signature, signature.c_str(), 4))
-            ret.push_back(*it);
+    for (auto& it:_matrices){//MSDIFMatrixVector::iterator it = _matrices.begin(); it != _matrices.end(); ++it) {
+        if (!strncmp(it._header.signature, signature.c_str(), 4))
+            ret.push_back(it);
     }
 
     return ret;
@@ -199,13 +200,13 @@ MSDIFMatrixVector MSDIFFrame::matricesWithSignature(std::string signature)
 void MSDIFFrame::calculateFrameSize()
 {
     header.frameSize = 16;
-    for (auto m : _matrices) {
-        header.frameSize += m->matrixDataSize();
+    for (auto& m : _matrices) {
+        header.frameSize += m.matrixDataSize();
     }
 }
 
 //
-void MSDIFFrame::addMatrix(MSDIFMatrix* m)
+void MSDIFFrame::addMatrix(MSDIFMatrix& m)
 {
     _matrices.push_back(m);
     header.matrixCount++;
@@ -222,7 +223,7 @@ void MSDIFFrame::removeMatrixAt(size_t idx)
     calculateFrameSize();
 }
 
-void MSDIFFrame::insertMatrix(size_t idx, MSDIFMatrix* fr)
+void MSDIFFrame::insertMatrix(size_t idx, MSDIFMatrix& fr)
 {
     if (idx >= _matrices.size())
         return;
@@ -246,17 +247,17 @@ void MSDIFFrame::mergeWithFrame(MSDIFFrame& frame2)
         mc = frame2.matrixCount();
 
     for (int i = 0; i < mc; i++) {
-        MSDIFMatrix* m = matrices()[i];
-        MSDIFMatrix* m2 = frame2.matrices()[i];
+        MSDIFMatrix& m = matrices()[i];
+        MSDIFMatrix& m2 = frame2.matrices()[i];
 
-        int m_rows = m->rows();
+        const int m_rows = m.rows();
         // todo:
         // int m_cols = m->columns();
 
-        m->resizeRows(m->rows() + m2->rows());
+        m.resizeRows(m.rows() + m2.rows());
 
-        for (int i = m_rows; i < m->rows(); i++) {
-            m->setRowValues<float>(i, m2->valuesAtRow<float>(i - m_rows));
+        for (int i = m_rows; i < m.rows(); i++) {
+            m.setRowValues<float>(i, m2.valuesAtRow<float>(i - m_rows));
         }
     }
 }

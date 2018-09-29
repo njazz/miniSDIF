@@ -97,9 +97,9 @@ void MSDIFMatrixHeader::setSignature(std::string s)
 
 //
 
-MSDIFMatrix::MSDIFMatrix()
-{
-}
+//MSDIFMatrix::MSDIFMatrix()
+//{
+//}
 
 MSDIFMatrix::MSDIFMatrix(std::string signature, uint32_t rows, uint32_t columns, uint32_t type)
 {
@@ -255,12 +255,14 @@ inline int MSDIFMatrix::paddingSize()
 
 mFileError MSDIFMatrix::toFile(std::ofstream& file)
 {
-    printf("write matrix\n");
-    printf("write: %s", info().c_str());
+    // TODO: switch debug
+//    printf("write matrix\n");
+//    printf("write: %s", info().c_str());
 
     _header.toFile(file);
 
-    printf("write: %s", info().c_str());
+    // TODO: switch debug
+//    printf("write: %s", info().c_str());
 
     char* b_data = new char[matrixDataSize()];
 
@@ -283,7 +285,8 @@ mFileError MSDIFMatrix::toFile(std::ofstream& file)
 
     file.write((char*)b_data, matrixDataSize());
 
-    printf("write matrix size %i\n", matrixDataSize());
+    // TODO: switch debug
+//    printf("write matrix size %i\n", matrixDataSize());
 
     char* padding = new char[paddingSize()];
     file.write((char*)padding, paddingSize());
