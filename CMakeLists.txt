@@ -13,6 +13,9 @@ set (SOURCES
     ./src/mSDIFFrame.cpp
     ./src/mSDIFMatrix.cpp
     ./src/mSDIFTypes.cpp
+
+    ./src/mSDIF-c.cpp
+    ./src/mSDIF-c.h
 )
 
 add_library(miniSDIF ${TL_LIB_SOURCES} ${SOURCES})

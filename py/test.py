@@ -1,0 +1,3 @@
+import minisdifpy
+
+print("imported")
