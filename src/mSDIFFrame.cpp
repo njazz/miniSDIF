@@ -79,15 +79,15 @@ void MSDIFFrameHeader::setSignature(std::string s)
 }
 //
 
-MSDIFFrame::MSDIFFrame(){};
+//MSDIFFrame::MSDIFFrame(){};
 
-MSDIFFrame::MSDIFFrame(std::string signature, int32_t streamID)
+MSDIFFrame::MSDIFFrame(std::string signature, int32_t streamID )
 {
     header.setSignature(signature);
     header.streamID = streamID;
 }
 
-MSDIFFrame::MSDIFFrame(MSDIFFrame& f)
+MSDIFFrame::MSDIFFrame(const MSDIFFrame &f)
     : header(f.header)
 {
     //header = f.header;
@@ -98,6 +98,19 @@ MSDIFFrame::MSDIFFrame(MSDIFFrame& f)
     }
 
     setTime(f.time());
+}
+
+MSDIFFrame::MSDIFFrame(MSDIFFrame* f)
+    : header(f->header)
+{
+    //header = f.header;
+    header.matrixCount = 0;
+
+    for (auto m : f->matrices()) {
+        addMatrix(new MSDIFMatrix(*m));
+    }
+
+    setTime(f->time());
 }
 
 mFileError MSDIFFrame::fromFile(std::ifstream& file)
@@ -226,15 +239,15 @@ void MSDIFFrame::removeAllMatrices()
     header.frameSize = 16;
 }
 
-void MSDIFFrame::mergeWithFrame(MSDIFFrame* frame2)
+void MSDIFFrame::mergeWithFrame(MSDIFFrame& frame2)
 {
     int mc = matrixCount();
-    if (frame2->matrixCount() < mc)
-        mc = frame2->matrixCount();
+    if (frame2.matrixCount() < mc)
+        mc = frame2.matrixCount();
 
     for (int i = 0; i < mc; i++) {
         MSDIFMatrix* m = matrices()[i];
-        MSDIFMatrix* m2 = frame2->matrices()[i];
+        MSDIFMatrix* m2 = frame2.matrices()[i];
 
         int m_rows = m->rows();
         // todo:

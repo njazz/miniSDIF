@@ -2,11 +2,11 @@
 //  mSDIFFile.h
 
 /* Copyright 2018 Alex Nadzharov
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
@@ -44,7 +44,7 @@ struct MSDIFFileHeader : public MSDIFFileHeaderStruct {
     void setSignature(std::string s);
 };
 
-typedef std::vector<MSDIFFrame*> MSDIFFrameVector;
+typedef std::vector<MSDIFFrame> MSDIFFrameVector;
 
 //
 
@@ -72,22 +72,22 @@ public:
 
     MSDIFFrameVector frames() { return _frames; };
 
-    MSDIFFrameVector* framesWithSignature(std::string signature);
-    MSDIFFrameVector* framesWithNotSignature(std::string signature);
-    MSDIFFrameVector* framesWithTimeRange(double start, double end);
-    MSDIFFrameVector* framesWithStreamID(uint32_t streamID);
+    MSDIFFrameVector framesWithSignature(std::string signature);
+    MSDIFFrameVector framesWithNotSignature(std::string signature);
+    MSDIFFrameVector framesWithTimeRange(double start, double end);
+    MSDIFFrameVector framesWithStreamID(uint32_t streamID);
 
     uint32_t frameCount() { return (uint32_t)_frames.size(); }
 
-    void addFrame(MSDIFFrame* fr);
-    void removeFrame(MSDIFFrame* fr);
+    void addFrame(MSDIFFrame &fr);
+//    void removeFrame(MSDIFFrame* fr);
     void removeFrameAt(size_t idx);
-    void insertFrame(size_t idx, MSDIFFrame* fr);
+    void insertFrame(size_t idx, MSDIFFrame& fr);
 
     void removeAllFrames();
-    void removeFramesWithSignature(std::string signature);
+//    void removeFramesWithSignature(std::string signature);
 
-    void replaceFrames(MSDIFFrameVector fv) { _frames = fv; }
+    void replaceFrames(MSDIFFrameVector& fv) { _frames = fv; }
 
     std::string info();
 
@@ -121,9 +121,9 @@ public:
     {
         MSDIFMatrix* m = new MSDIFMatrix(signature, rows);
         m->setValues<T>(data);
-        MSDIFFrame* f = new MSDIFFrame(signature, streamID);
-        f->setTime(time);
-        f->addMatrix(m);
+        MSDIFFrame f = new MSDIFFrame(signature, streamID);
+        f.setTime(time);
+        f.addMatrix(m);
         addFrame(f);
     }
 
@@ -133,9 +133,9 @@ public:
         //int rows =  sizeof(data);
         MSDIFMatrix* m = new MSDIFMatrix(signature, rows);
         m->setValues<T>(data);
-        MSDIFFrame* f = new MSDIFFrame(signature, streamID);
-        f->setTime(time);
-        f->addMatrix(m);
+        MSDIFFrame f(signature, streamID);
+        f.setTime(time);
+        f.addMatrix(m);
         insertFrame(idx, f);
     }
 };

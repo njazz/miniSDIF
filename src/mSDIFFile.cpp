@@ -98,18 +98,18 @@ mFileError MSDIFFile::fromFile(std::ifstream& file)
     while (!(file.eof())) {
         printf("reading frame %i\n", c++);
 
-        MSDIFFrame* newFrame = new MSDIFFrame;
+        MSDIFFrame newFrame; // = new MSDIFFrame;
 
-        mFileError err = newFrame->fromFile(file);
+        mFileError err = newFrame.fromFile(file);
         if (!(err == meOK)) {
-            delete newFrame;
+            //delete newFrame;
             return err;
         }
 
-        if (newFrame->frameSize() >= 12)
+        if (newFrame.frameSize() >= 12)
             _frames.push_back(newFrame);
         else {
-            delete newFrame;
+            //delete newFrame;
             return meOK;
         }
 
@@ -132,9 +132,9 @@ mFileError MSDIFFile::toFile(std::ofstream& file)
     if (err != meOK)
         return err;
 
-    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
+    for (auto it : _frames) { //MSDIFFrameVectorT::iterator it = _frames.begin(); it != _frames.end(); ++it) {
 
-        mFileError err = (*it)->toFile(file);
+        mFileError err = it.toFile(file);
         if (!(err == meOK)) {
             return err;
         }
@@ -186,57 +186,57 @@ std::string MSDIFFile::info()
     std::string ret = "[SDIF File] ";
     ret += " Version: " + std::to_string(header.specificationVersion) + " Frame count: " + std::to_string(_frames.size()) + "\n";
 
-    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
-        if (*it)
-            ret += (*it)->info();
+    for (auto it : _frames) { //MSDIFFrameVectorT::iterator it = _frames.begin(); it != _frames.end(); ++it) {
+        //if (*it)
+        ret += it.info();
     }
 
     return ret;
 }
 
-MSDIFFrameVector* MSDIFFile::framesWithTimeRange(double start, double end)
+MSDIFFrameVector MSDIFFile::framesWithTimeRange(double start, double end)
 {
-    MSDIFFrameVector* ret = new MSDIFFrameVector;
+    MSDIFFrameVector ret;
 
-    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
-        if (((*it)->time() >= start) && ((*it)->time() < end))
-            ret->push_back(*it);
+    for (auto it : _frames) { //MSDIFFrameVectorT::iterator it = _frames.begin(); it != _frames.end(); ++it) {
+        if ((it.time() >= start) && (it.time() < end))
+            ret.push_back(it);
     }
 
     return ret;
 }
 
-MSDIFFrameVector* MSDIFFile::framesWithStreamID(uint32_t streamID)
+MSDIFFrameVector MSDIFFile::framesWithStreamID(uint32_t streamID)
 {
-    MSDIFFrameVector* ret = new MSDIFFrameVector;
+    MSDIFFrameVector ret;
 
-    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
-        if ((*it)->streamID() == streamID)
-            ret->push_back(*it);
+    for (auto it : _frames) { //MSDIFFrameVectorT::iterator it = _frames.begin(); it != _frames.end(); ++it) {
+        if (it.streamID() == streamID)
+            ret.push_back(it);
     }
 
     return ret;
 }
 
-MSDIFFrameVector* MSDIFFile::framesWithSignature(std::string signature)
+MSDIFFrameVector MSDIFFile::framesWithSignature(std::string signature)
 {
-    MSDIFFrameVector* ret = new MSDIFFrameVector;
+    MSDIFFrameVector ret; // = new MSDIFFrameVector;
 
-    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
-        if (!strncmp((*it)->signature(), signature.c_str(), 4))
-            ret->push_back(*it);
+    for (auto it : _frames) { //MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
+        if (!strncmp(it.signature(), signature.c_str(), 4))
+            ret.push_back(it);
     }
 
     return ret;
 }
 
-MSDIFFrameVector* MSDIFFile::framesWithNotSignature(std::string signature)
+MSDIFFrameVector MSDIFFile::framesWithNotSignature(std::string signature)
 {
-    MSDIFFrameVector* ret = new MSDIFFrameVector;
+    MSDIFFrameVector ret; // = new MSDIFFrameVector;
 
-    for (MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
-        if (strncmp((*it)->signature(), signature.c_str(), 4))
-            ret->push_back(*it);
+    for (auto it : _frames) { //MSDIFFrameVector::iterator it = _frames.begin(); it != _frames.end(); ++it) {
+        if (strncmp(it.signature(), signature.c_str(), 4))
+            ret.push_back(it);
     }
 
     return ret;
@@ -244,7 +244,7 @@ MSDIFFrameVector* MSDIFFile::framesWithNotSignature(std::string signature)
 
 //
 
-void MSDIFFile::addFrame(MSDIFFrame* fr)
+void MSDIFFile::addFrame(MSDIFFrame& fr)
 {
     _frames.push_back(fr);
 }
@@ -257,13 +257,14 @@ void MSDIFFile::removeFrameAt(size_t idx)
     _frames.erase(_frames.begin() + idx);
 }
 
-void MSDIFFile::removeFrame(MSDIFFrame* fr)
-{
-    MSDIFFrameVector::iterator it = std::find(_frames.begin(), _frames.end(), fr);
-    if (it != _frames.end())
-        _frames.erase(it);
-}
-void MSDIFFile::insertFrame(size_t idx, MSDIFFrame* fr)
+//void MSDIFFile::removeFrame(MSDIFFrame* fr)
+//{
+//    MSDIFFrameVector::iterator it = std::find(_frames.begin(), _frames.end(), fr);
+//    if (it != _frames.end())
+//        _frames.erase(it);
+//}
+
+void MSDIFFile::insertFrame(size_t idx, MSDIFFrame &fr)
 {
     if (idx >= _frames.size())
         return;
@@ -276,19 +277,19 @@ void MSDIFFile::removeAllFrames()
     _frames.clear();
 }
 
-void MSDIFFile::removeFramesWithSignature(std::string signature)
-{
-    for (auto fr : _frames) {
-        if (!strncmp(fr->signature(), signature.c_str(), 4))
-            removeFrame(fr);
-    }
-}
+//void MSDIFFile::removeFramesWithSignature(std::string signature)
+//{
+//    for (auto fr : _frames) {
+//        if (!strncmp(fr.signature(), signature.c_str(), 4))
+//            removeFrame(fr);
+//    }
+//}
 
 void MSDIFFile::applyTime()
 {
     for (auto f : _frames) {
-        if (f->time())
-            f->applyTime();
+        if (f.time())
+            f.applyTime();
     }
 }
 
@@ -296,7 +297,7 @@ inline size_t _maximumIndexValue(MSDIFFrameVector vec)
 {
     size_t ret = 0;
     for (auto v : vec) {
-        for (auto m : v->matrices()) {
+        for (auto m : v.matrices()) {
             if (ret < m->maximumIndexValue())
                 ret = m->maximumIndexValue();
         }
@@ -314,44 +315,47 @@ inline size_t _maximumIndexValue(MSDIFFrameVector vec)
 //    }
 //}
 
-inline void _shiftIndices(MSDIFFrame* f, size_t idx)
+inline void _shiftIndices(MSDIFFrame& f, size_t idx)
 {
-    for (auto m : f->matrices()) {
+    for (auto m : f.matrices()) {
         m->shiftIndices(idx);
     }
 }
 
-MSDIFFrame* _mergeFramesProc(MSDIFFrame* f1, MSDIFFrame* f2, size_t* i1, size_t* i2, size_t shift)
+MSDIFFrame _mergeFramesProc(MSDIFFrame& f1, MSDIFFrame& f2, size_t* i1, size_t* i2, size_t shift)
 {
-//    if (!f2) {
-//        if (!f1)
-//            return 0;
-//        else
-//            return f1;
-//    }
-//    if (!f1) {
-//        if (!f2)
-//            return 0;
-//        else
-//            return f2;
-//    }
+    //    if (!f2) {
+    //        if (!f1)
+    //            return 0;
+    //        else
+    //            return f1;
+    //    }
+    //    if (!f1) {
+    //        if (!f2)
+    //            return 0;
+    //        else
+    //            return f2;
+    //    }
 
-    if (f1->time() > f2->time()) {
+    MSDIFFrame ret;
+
+    if (f1.time() > f2.time()) {
         (*i1)--;
-        return new MSDIFFrame(*f1);
+        ret = MSDIFFrame(f1);
+        return ret;
     } else {
-        MSDIFFrame* nf = new MSDIFFrame(*f2);
-        _shiftIndices(nf, shift);
+        //MSDIFFrame* nf = new MSDIFFrame(*f2);
+        _shiftIndices(f2, shift);
 
         (*i2)--;
         //
-        return nf;
+        return f2;
     }
 }
 
-bool _sortFramesByTimePredicate(MSDIFFrame* f1, MSDIFFrame* f2)
+bool _sortFramesByTimePredicate(MSDIFFrame& f1, MSDIFFrame& f2)
 {
-    return f1->time() < f2->time();
+    return f1.time() < f2.time();
 }
 
 void MSDIFFile::sortFramesByTime()
@@ -361,82 +365,83 @@ void MSDIFFile::sortFramesByTime()
 
 void MSDIFFile::_mergeFramesWithSameTime()
 {
-    std::vector<MSDIFFrame*> framesToDelete;
+    //    std::vector<MSDIFFrame> framesToDelete;
+
+    std::vector<size_t> framesToDeleteIdx;
 
     for (int i = 0; i < frameCount() - 1; i++) {
-        if (fabs(frames()[i]->time() - frames()[i + 1]->time()) < 0.000001) {
-            frames()[i]->mergeWithFrame(frames()[i + 1]);
-            framesToDelete.push_back(frames()[i + 1]);
+        if (fabs(frames()[i].time() - frames()[i + 1].time()) < 0.000001) {
+            frames()[i].mergeWithFrame(frames()[i + 1]);
+            //            framesToDelete.push_back(frames()[i + 1]);
+            framesToDeleteIdx.push_back(i + 1);
+
             i++;
         }
     }
 
-    for (auto a : framesToDelete)
-        removeFrame(a);
+    for (auto a : framesToDeleteIdx)
+        removeFrameAt(a);
 }
 
 void MSDIFFile::mergeFramesWithSignature(std::string signature, MSDIFFile* file)
 {
-    MSDIFFrameVector* frames1 = framesWithSignature(signature);
-    MSDIFFrameVector* frames2 = file->framesWithSignature(signature);
+    const MSDIFFrameVector& frames1 = framesWithSignature(signature);
+    const MSDIFFrameVector& frames2 = file->framesWithSignature(signature);
 
     MSDIFFrameVector nf;
 
-    size_t shift = _maximumIndexValue(*frames1);
+    size_t shift = _maximumIndexValue(frames1);
 
     // ??
     //size_t f_c1 = frames1->size();
     //size_t f_c2 = frames2->size();
 
+    //    while (f_c2 && f_c1) {
 
+    //        MSDIFFrame* fr = _mergeFramesProc(frames2->at(frameCount() - f_c1), frames2->at(frames2->size() - f_c2), &f_c1, &f_c2, shift);
 
-//    while (f_c2 && f_c1) {
+    //        if (fr)
+    //            nf.push_back(fr);
+    //        else
+    //            f_c2--;
+    //    }
 
-//        MSDIFFrame* fr = _mergeFramesProc(frames2->at(frameCount() - f_c1), frames2->at(frames2->size() - f_c2), &f_c1, &f_c2, shift);
-
-//        if (fr)
-//            nf.push_back(fr);
-//        else
-//            f_c2--;
-//    }
-
-//    while (f_c2) {
-//        nf.push_back(frames2->at(frames2->size() - f_c2));
-//        f_c2--;
-//    }
-//    while (f_c1) {
-//        nf.push_back(frames1->at(frames1->size() - f_c1));
-//        f_c1--;
-//    }
+    //    while (f_c2) {
+    //        nf.push_back(frames2->at(frames2->size() - f_c2));
+    //        f_c2--;
+    //    }
+    //    while (f_c1) {
+    //        nf.push_back(frames1->at(frames1->size() - f_c1));
+    //        f_c1--;
+    //    }
 
     //removeFramesWithSignature("1TRC");
-    for (MSDIFFrame* ff : *frames2)
-    {
-        MSDIFFrame* sf = new MSDIFFrame(*ff);
-        _shiftIndices(sf, shift);
-        addFrame(sf);
+    for (MSDIFFrame ff : frames2) {
+        //MSDIFFrame* sf = MSDIFFrame(ff);
+        _shiftIndices(ff, shift);
+        addFrame(ff);
     }
 
     sortFramesByTime();
     _mergeFramesWithSameTime();
 
-    delete frames1;
-    delete frames2;
+    //    delete frames1;
+    //    delete frames2;
 }
 
 void MSDIFFile::setTimeOffset(float t_o)
 {
     _timeOffset = t_o;
-    for (auto f : _frames) {
-        if (f->time())
-            f->setTimeOffset(t_o);
+    for (auto& f : _frames) {
+        if (f.time())
+            f.setTimeOffset(t_o);
     }
 }
 void MSDIFFile::setTimeScale(float t_s)
 {
     _timeScale = t_s;
-    for (auto f : _frames) {
-        if (f->time())
-            f->setTimeScale(t_s);
+    for (auto& f : _frames) {
+        if (f.time())
+            f.setTimeScale(t_s);
     }
 }

@@ -52,7 +52,7 @@ class MSDIFFrame {
     MSDIFFrameHeader header;
     MSDIFMatrixVector _matrices;
 
-    MSDIFFrame();
+//    MSDIFFrame();
 
     //
     mFileError fromFile(std::ifstream& file);
@@ -66,14 +66,16 @@ class MSDIFFrame {
     float _gain = 1;
 
 public:
-    MSDIFFrame(std::string signature, int32_t streamID);
-    MSDIFFrame(MSDIFFrame& f);
+    MSDIFFrame(std::string signature = "1TRC", int32_t streamID = 0);
+    MSDIFFrame(const MSDIFFrame& f);
+    MSDIFFrame(MSDIFFrame* f);
 
     //
     char* signature() { return header.signature; }
     uint32_t frameSize() { return header.frameSize; }
 
     double time() { return header.time * _timeScale + _timeOffset; }
+    const double time() const { return header.time * _timeScale + _timeOffset; }
     void setTime(double t) { header.time = t; }
 
     int32_t streamID() { return header.streamID; }
@@ -83,6 +85,7 @@ public:
 
     //
     MSDIFMatrixVector& matrices() { return _matrices; }; // todo
+    const MSDIFMatrixVector& matrices() const { return _matrices; }; // todo
     MSDIFMatrixVector matricesWithSignature(std::string signature);
 
     void addMatrix(MSDIFMatrix* m);
@@ -116,7 +119,7 @@ public:
     }
 
     //
-    void mergeWithFrame(MSDIFFrame *frame2);
+    void mergeWithFrame(MSDIFFrame &frame2);
     
 };
 

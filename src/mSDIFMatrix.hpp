@@ -81,11 +81,11 @@ public:
     void resize(uint32_t rows, uint32_t columns);
     void resizeRows(uint32_t rows);
 
-    void addRow();
-    void addColumn();
+//    void addRow();
+//    void addColumn();
 
-    void deleteRow(size_t idx);
-    void deleteColumn(size_t idx);
+//    void deleteRow(size_t idx);
+//    void deleteColumn(size_t idx);
 
     uint32_t matrixDataSize();
     int paddingSize();
