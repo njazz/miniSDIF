@@ -91,9 +91,9 @@ msd_matrix.add_method('dataVec<float>', ReturnValue.new("std::vector<float>"),[]
 # param('size_t', 'idx')\
 # ], custom_name="valuesAtRow")
 #
-# msd_matrix.add_method('valuesAtColumn<float>', ReturnValue.new("const float*", caller_owns_return=True), [\
-# param('size_t', 'idx')\
-# ], custom_name="valuesAtColumn")
+msd_matrix.add_method('valuesAtColumnVec<float>', ReturnValue.new("std::vector<float>"), [\
+param('size_t', 'idx')\
+], custom_name="valuesAtColumn")
 
 ##########
 
@@ -121,6 +121,7 @@ msd_frame.add_method('matrixCount', retval('uint32_t'), [])
 # mod.add_container('std::vector<float*>', 'float', 'vector')
 mod.add_container('std::vector<MSDIFMatrix>', 'MSDIFMatrix', 'vector', custom_name="SDIFMatrixVec")
 msd_frame.add_method('matrices',retval('std::vector<MSDIFMatrix>'),[])
+
 ###
 
 msd_file = mod.add_class("MSDIFFile")
@@ -131,7 +132,7 @@ msd_file.add_constructor([])
 msd_file.add_method('readFile', retval('int'), [param('std::string','filename')])
 msd_file.add_method('writeFile', retval('int'), [param('std::string','filename')])
 
-
+msd_file.add_method('frameCount', retval('uint32_t'), [])
 # mod.add_typedef(["std::vector<MSDIFFrame*>"],["MSDIFFrameVector" ])
 # msd_file.add_method('frameCount', retval('int'), [])
 

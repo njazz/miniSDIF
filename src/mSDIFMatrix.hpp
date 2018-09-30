@@ -114,7 +114,9 @@ public:
     template <typename T>
     const std::vector<T> dataVec()
     {
-        return std::vector<T>(*((T*)_data));
+        std::vector<T> ret;
+        ret.assign((T*)_data,(T*)_data+matrixDataSize());
+        return ret;
     }
 
     template <typename T>
@@ -137,6 +139,15 @@ public:
     }
 
     template <typename T>
+    std::vector<T> valuesAtRowVec(size_t idx)
+    {
+      std::vector<T> ret;
+      T* p = valuesAtRow<T>(idx);
+      ret.assign(p,p+columns());
+      return ret;
+    }
+
+    template <typename T>
     T* valuesAtColumn(size_t idx)
     {
         if (idx >= (_header.columns))
@@ -153,6 +164,15 @@ public:
         }
 
         return d;
+    }
+
+    template <typename T>
+    std::vector<T> valuesAtColumnVec(size_t idx)
+    {
+      std::vector<T> ret;
+      T* p = valuesAtColumn<T>(idx);
+      ret.assign(p,p+rows());
+      return ret;
     }
 
     template <typename T>
@@ -183,6 +203,18 @@ public:
         for (int i = 0; i < _header.columns; i++) {
             ((T*)_data)[i + idx * _header.columns] = d[i];
         }
+    }
+
+    template <typename T>
+    void setRowValuesVec(std::vector<T> v)
+    {
+      return setRowValues(v.size(), v.data());
+    }
+
+    template <typename T>
+    void setColumnValuesVec(std::vector<T> v)
+    {
+      return setColumnValues(v.size(), v.data());
     }
 
     // ==========

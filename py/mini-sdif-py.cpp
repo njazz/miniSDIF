@@ -628,6 +628,26 @@ _wrap_PyMSDIFMatrix_dataVec(PyMSDIFMatrix *self)
 }
 
 
+PyObject *
+_wrap_PyMSDIFMatrix_valuesAtColumn(PyMSDIFMatrix *self, PyObject *args, PyObject *kwargs)
+{
+    PyObject *py_retval;
+    unsigned PY_LONG_LONG idx;
+    const char *keywords[] = {"idx", NULL};
+    std::vector< float > retval;
+    Pystd__vector__lt__float__gt__ *py_std__vector__lt__float__gt__;
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, (char *) "K", (char **) keywords, &idx)) {
+        return NULL;
+    }
+    retval = self->obj->valuesAtColumnVec<float>(idx);
+    py_std__vector__lt__float__gt__ = PyObject_New(Pystd__vector__lt__float__gt__, &Pystd__vector__lt__float__gt___Type);
+    py_std__vector__lt__float__gt__->obj = new std::vector<float>(retval);
+    py_retval = Py_BuildValue((char *) "N", py_std__vector__lt__float__gt__);
+    return py_retval;
+}
+
+
 static PyObject*
 _wrap_PyMSDIFMatrix__copy__(PyMSDIFMatrix *self)
 {
@@ -653,6 +673,7 @@ static PyMethodDef PyMSDIFMatrix_methods[] = {
     {(char *) "maximumIndexValue", (PyCFunction) _wrap_PyMSDIFMatrix_maximumIndexValue, METH_NOARGS, "maximumIndexValue()\n\n" },
     {(char *) "shiftIndices", (PyCFunction) _wrap_PyMSDIFMatrix_shiftIndices, METH_VARARGS|METH_KEYWORDS, "shiftIndices(idx)\n\ntype: idx: size_t" },
     {(char *) "dataVec", (PyCFunction) _wrap_PyMSDIFMatrix_dataVec, METH_NOARGS, "dataVec()\n\n" },
+    {(char *) "valuesAtColumn", (PyCFunction) _wrap_PyMSDIFMatrix_valuesAtColumn, METH_VARARGS|METH_KEYWORDS, "valuesAtColumn(idx)\n\ntype: idx: size_t" },
     {(char *) "__copy__", (PyCFunction) _wrap_PyMSDIFMatrix__copy__, METH_NOARGS, NULL},
     {NULL, NULL, 0, NULL}
 };
@@ -1111,6 +1132,18 @@ _wrap_PyMSDIFFile_writeFile(PyMSDIFFile *self, PyObject *args, PyObject *kwargs)
 
 
 PyObject *
+_wrap_PyMSDIFFile_frameCount(PyMSDIFFile *self)
+{
+    PyObject *py_retval;
+    uint32_t retval;
+
+    retval = self->obj->frameCount();
+    py_retval = Py_BuildValue((char *) "N", PyLong_FromUnsignedLong(retval));
+    return py_retval;
+}
+
+
+PyObject *
 _wrap_PyMSDIFFile_frames(PyMSDIFFile *self)
 {
     PyObject *py_retval;
@@ -1127,6 +1160,7 @@ _wrap_PyMSDIFFile_frames(PyMSDIFFile *self)
 static PyMethodDef PyMSDIFFile_methods[] = {
     {(char *) "readFile", (PyCFunction) _wrap_PyMSDIFFile_readFile, METH_VARARGS|METH_KEYWORDS, "readFile(filename)\n\ntype: filename: std::string" },
     {(char *) "writeFile", (PyCFunction) _wrap_PyMSDIFFile_writeFile, METH_VARARGS|METH_KEYWORDS, "writeFile(filename)\n\ntype: filename: std::string" },
+    {(char *) "frameCount", (PyCFunction) _wrap_PyMSDIFFile_frameCount, METH_NOARGS, "frameCount()\n\n" },
     {(char *) "frames", (PyCFunction) _wrap_PyMSDIFFile_frames, METH_NOARGS, "frames()\n\n" },
     {NULL, NULL, 0, NULL}
 };
