@@ -127,8 +127,8 @@
 
     XCTAssert(f1.matrixCount() == 0);
 
-    MSDIFMatrix* m1 = new MSDIFMatrix("1TRC", 1, 4, mTFloat4);
-    MSDIFMatrix* m2 = new MSDIFMatrix("1NVT", 1, 4, mTChar);
+    MSDIFMatrix m1("1TRC", 1, 4, mTFloat4);
+    MSDIFMatrix m2("1NVT", 1, 4, mTChar);
 
     f1.addMatrix(m1);
     XCTAssert(f1.matrixCount() == 1);

@@ -9,4 +9,4 @@ miniSDIF.xcodeproj/project.xcworkspace/
 
 miniSDIFTests/testWrite.sdif
 
-*.sdif
+py/export.obj
