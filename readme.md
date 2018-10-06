@@ -11,4 +11,4 @@ http://sdif.sourceforge.net/standard/types-main.html
 
 C++11
 
-Test available inside Xcode project
+Tests available inside Xcode project

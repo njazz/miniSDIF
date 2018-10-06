@@ -88,6 +88,8 @@ PYBIND11_MODULE(minisdifpy, m)
         .def("matrixCount", &MSDIFFrame::matrixCount)
 
         .def("matrices", [](const MSDIFFrame& f){ return f.matrices();})
+        .def("matrixAt", [](const MSDIFFrame& f, size_t i){ return f.matrices()[i];})
+
         .def("matricesWithSignature", &MSDIFFrame::matricesWithSignature)
 
         .def("addMatrix", &MSDIFFrame::addMatrix)
